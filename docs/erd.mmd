@@ -1,0 +1,19 @@
+erDiagram
+    USERS {
+        int ID PK "auto_increment"
+        varchar FirstName "NOT NULL, max 50"
+        varchar LastName "NOT NULL, max 50"
+        varchar Login "NOT NULL, max 50"
+        varchar Password "NOT NULL, max 255"
+    }
+
+    CONTACTS {
+        int ID PK "auto_increment"
+        varchar FirstName "NOT NULL, max 50"
+        varchar LastName "NOT NULL, max 50"
+        varchar Phone "NOT NULL, max 50"
+        varchar Email "NOT NULL, max 255"
+        int UserID FK "NOT NULL, references USERS.ID"
+    }
+
+    USERS ||--o{ CONTACTS : "has"
