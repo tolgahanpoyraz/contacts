@@ -1,4 +1,4 @@
-const urlBase = 'http://COP4331-5.com/LAMPAPI';
+const urlBase = 'http://COP4331-9.com/LAMPAPI';
 const extension = 'php';
 
 let userId = 0;
@@ -30,25 +30,32 @@ function doLogin()
 	{
 		xhr.onreadystatechange = function() 
 		{
-			if (this.readyState == 4 && this.status == 200) 
-			{
-				let jsonObject = JSON.parse( xhr.responseText );
-				userId = jsonObject.id;
-		
-				if( userId < 1 )
-				{		
-					document.getElementById("loginResult").innerHTML = "User/Password combination incorrect";
-					return;
-				}
-		
-				firstName = jsonObject.firstName;
-				lastName = jsonObject.lastName;
-
-				saveCookie();
-	
-				window.location.href = "color.html";
-			}
-		};
+            if (this.readyState == 4) 
+            {
+                if (this.status == 200) 
+                {
+                    let jsonObject = JSON.parse( xhr.responseText );
+                    userId = jsonObject.id;
+            
+                    if( userId < 1 )
+                    {		
+                        document.getElementById("loginResult").innerHTML = "User/Password combination incorrect";
+                        return;
+                    }
+            
+                    firstName = jsonObject.firstName;
+                    lastName = jsonObject.lastName;
+					
+                    saveCookie();
+        
+                    window.location.href = "color.html";
+                }
+                else if (this.status == 401)
+                {
+                    document.getElementById("loginResult").innerHTML = "User/Password combination incorrect";
+                }
+            }
+        };
 		xhr.send(jsonPayload);
 	}
 	catch(err)
