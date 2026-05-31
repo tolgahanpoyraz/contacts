@@ -20,3 +20,5 @@ jobs:
             cd /var/www/contacts-app
             git fetch origin
             git reset --hard origin/main
+            cd LAMPAPI
+            composer install --no-dev --optimize-autoloader
