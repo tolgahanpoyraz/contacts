@@ -1,0 +1,378 @@
+swagger: "2.0"
+info:
+  title: Personal Contacts Manager API
+  description: A RESTful API for managing contacts with JWT-based authentication.
+  version: "1.0.0"
+basePath: "/"
+schemes:
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+
+securityDefinitions:
+  BearerAuth:
+    type: apiKey
+    in: header
+    name: Authorization
+    description: "JWT token in the format: Bearer <token>"
+
+paths:
+  /login:
+    post:
+      summary: Authenticate a user
+      description: Validates credentials and returns a JWT on success.
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/Credentials"
+      responses:
+        200:
+          description: Login successful
+          schema:
+            $ref: "#/definitions/AuthResponse"
+          examples:
+            application/json:
+              token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        400:
+          description: Bad input
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              error: "Missing required field"
+              field: "password"
+        401:
+          description: Invalid credentials
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              error: "Invalid credentials"
+        500:
+          description: Server error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              error: "Internal server error"
+
+  /register:
+    post:
+      summary: Register a new user
+      description: Creates a new user account and returns a JWT on success.
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/Credentials"
+      responses:
+        201:
+          description: Registration successful
+          schema:
+            $ref: "#/definitions/AuthResponse"
+          examples:
+            application/json:
+              token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        400:
+          description: Bad input
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              error: "Missing required field"
+              field: "username"
+        409:
+          description: Username already taken
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              error: "Username already taken"
+        500:
+          description: Server error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              error: "Internal server error"
+
+  /contacts:
+    get:
+      summary: Get all contacts or search by name/email
+      description: Returns all contacts for the authenticated user. Optionally filters by a partial match using the `q` query parameter (matches against name or email).
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: query
+          name: q
+          type: string
+          required: false
+          description: Partial match search string (matches against name or email)
+      responses:
+        200:
+          description: Contacts retrieved successfully
+          schema:
+            $ref: "#/definitions/ContactListResponse"
+          examples:
+            application/json:
+              contacts:
+                - id: 1
+                  name: "John Doe"
+                  email: "johndoe@mail.com"
+                  phone: "555-0142"
+                - id: 2
+                  name: "Jane Doe"
+                  email: "janedoe@mail.com"
+                  phone: "555-0198"
+        401:
+          description: Unauthorized — missing or invalid JWT
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              error: "Unauthorized"
+        500:
+          description: Server error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              error: "Internal server error"
+
+    post:
+      summary: Add a new contact
+      description: Creates a new contact for the authenticated user.
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/ContactInput"
+      responses:
+        201:
+          description: Contact created successfully
+          schema:
+            $ref: "#/definitions/ContactResponse"
+          examples:
+            application/json:
+              contact:
+                id: 3
+                name: "John Doe"
+                email: "johndoe@mail.com"
+                phone: "555-0142"
+        400:
+          description: Bad input
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              error: "Invalid field value"
+              field: "email"
+        401:
+          description: Unauthorized — missing or invalid JWT
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              error: "Unauthorized"
+        500:
+          description: Server error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              error: "Internal server error"
+
+  /contacts/{contactId}:
+    patch:
+      summary: Edit an existing contact
+      description: Updates one or more fields on an existing contact. Only provided fields will be changed; omitted fields are left unchanged.
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: contactId
+          type: integer
+          required: true
+          description: The ID of the contact to update
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/ContactPatch"
+      responses:
+        200:
+          description: Contact updated successfully
+          schema:
+            $ref: "#/definitions/ContactResponse"
+          examples:
+            application/json:
+              contact:
+                id: 1
+                name: "John Doe"
+                email: "johndoe@mail.com"
+                phone: "555-0199"
+        400:
+          description: Bad input — includes a message indicating which field failed validation
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              error: "Invalid field value"
+              field: "email"
+        401:
+          description: Unauthorized — missing or invalid JWT
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              error: "Unauthorized"
+        404:
+          description: Contact not found
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              error: "Contact not found"
+        500:
+          description: Server error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              error: "Internal server error"
+
+    delete:
+      summary: Delete a contact
+      description: Permanently deletes a contact belonging to the authenticated user.
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: contactId
+          type: integer
+          required: true
+          description: The ID of the contact to delete
+      responses:
+        204:
+          description: Contact deleted successfully
+        401:
+          description: Unauthorized — missing or invalid JWT
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              error: "Unauthorized"
+        404:
+          description: Contact not found
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              error: "Contact not found"
+        500:
+          description: Server error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              error: "Internal server error"
+
+definitions:
+  Credentials:
+    type: object
+    required:
+      - username
+      - password
+    properties:
+      username:
+        type: string
+        example: "user"
+      password:
+        type: string
+        example: "pass"
+
+  AuthResponse:
+    type: object
+    properties:
+      token:
+        type: string
+        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+
+  Contact:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 1
+      name:
+        type: string
+        example: "John Doe"
+      email:
+        type: string
+        example: "johndoe@mail.com"
+      phone:
+        type: string
+        example: "555-0142"
+
+  ContactInput:
+    type: object
+    required:
+      - name
+      - email
+    properties:
+      name:
+        type: string
+        example: "John Doe"
+      email:
+        type: string
+        example: "johndoe@mail.com"
+      phone:
+        type: string
+        example: "555-0142"
+
+  ContactPatch:
+    type: object
+    description: All fields are optional. Only provided fields will be updated.
+    properties:
+      name:
+        type: string
+        example: "John Doe"
+      email:
+        type: string
+        example: "johndoe@mail.com"
+      phone:
+        type: string
+        example: "555-0199"
+
+  ContactResponse:
+    type: object
+    properties:
+      contact:
+        $ref: "#/definitions/Contact"
+
+  ContactListResponse:
+    type: object
+    properties:
+      contacts:
+        type: array
+        items:
+          $ref: "#/definitions/Contact"
+
+  ErrorResponse:
+    type: object
+    properties:
+      error:
+        type: string
+        example: "An error occurred"
+      field:
+        type: string
+        description: Optional — present on 400 errors to indicate which field failed validation
+        example: "email"
