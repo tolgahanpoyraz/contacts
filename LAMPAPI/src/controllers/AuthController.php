@@ -57,9 +57,9 @@ class AuthController
     private function requireFields(array $body, array $fields): bool
     {
         $missing = [];
-        foreach (['username', 'password'] as $field) {
+        foreach ($fields as $field) {
             if (empty($body[$field])) {
-                array_push($missing, $field);
+                $missing[] = $field;
             }
         }
 
