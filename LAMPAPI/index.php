@@ -23,7 +23,7 @@ $authController = new AuthController($userModel);
 
 $method = $_SERVER['REQUEST_METHOD'];
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$path = preg_replace('#^/LAMPAPI#', '', $path); # Strip the /LAMPAPI prefix from the url
+$path = preg_replace('#^/api#', '', $path); # Strip the /api prefix from the url
 
 match([$method, $path]) {
     ['GET', '/'] => print('Hello, world!'),
