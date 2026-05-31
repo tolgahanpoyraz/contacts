@@ -39,13 +39,14 @@ paths:
             application/json:
               token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
         400:
-          description: Bad input
+          description: Bad input — one or more required fields are missing
           schema:
             $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
-              error: "Missing required field"
-              field: "password"
+              error: "Missing required fields"
+              fields:
+                - "password"
         401:
           description: Invalid credentials
           schema:
@@ -80,13 +81,15 @@ paths:
             application/json:
               token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
         400:
-          description: Bad input
+          description: Bad input — one or more required fields are missing
           schema:
             $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
-              error: "Missing required field"
-              field: "username"
+              error: "Missing required fields"
+              fields:
+                - "username"
+                - "lastName"
         409:
           description: Username already taken
           schema:
@@ -172,13 +175,14 @@ paths:
                 email: "johndoe@mail.com"
                 phone: "555-0142"
         400:
-          description: Bad input
+          description: Bad input — one or more required fields are missing
           schema:
             $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
-              error: "Missing required field"
-              field: "email"
+              error: "Missing required fields"
+              fields:
+                - "email"
         401:
           description: Unauthorized — missing or invalid JWT
           schema:
@@ -225,13 +229,14 @@ paths:
                 email: "johndoe@mail.com"
                 phone: "555-0199"
         400:
-          description: Bad input — includes a message indicating which field failed validation
+          description: Bad input — a provided field failed validation
           schema:
             $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               error: "Invalid field value"
-              field: "email"
+              fields:
+                - "email"
         401:
           description: Unauthorized — missing or invalid JWT
           schema:
@@ -409,7 +414,10 @@ definitions:
       error:
         type: string
         example: "An error occurred"
-      field:
-        type: string
-        description: Optional — present on 400 errors to indicate which field failed validation
-        example: "email"
+      fields:
+        type: array
+        description: Optional — present on 400 errors to indicate which fields failed validation or were missing
+        items:
+          type: string
+        example:
+          - "email"
