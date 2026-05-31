@@ -21,4 +21,4 @@ jobs:
             git fetch origin
             git reset --hard origin/main
             cd LAMPAPI
-            composer install --no-dev --optimize-autoloader
+            composer install --no-dev --optimize-autoloader --no-interaction
