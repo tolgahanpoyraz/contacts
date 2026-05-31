@@ -1,6 +1,9 @@
 <?php
 
 require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/src/models/User.php';
+require_once __DIR__ . '/src/models/Contact.php';
+require_once __DIR__ . '/src/controllers/AuthController.php';
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
@@ -20,7 +23,7 @@ $authController = new AuthController($userModel);
 
 $method = $_SERVER['REQUEST_METHOD'];
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-
+$path = preg_replace('#^/LAMPAPI#', '', $path); # Strip the /LAMPAPI prefix from the url
 
 match([$method, $path]) {
     ['GET', '/'] => print('Hello, world!'),
