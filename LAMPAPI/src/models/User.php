@@ -7,7 +7,7 @@ class User
 
     }
 
-    public function fetchByUsername(string $username): array|false
+    public function findByUsername(string $username): array|false
     {
         $stmt = $this->pdo->prepare('SELECT ID as id, Login as login, Password as password FROM Users WHERE Login = :username');
         $stmt->execute([':username' => $username]);

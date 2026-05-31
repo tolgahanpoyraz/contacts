@@ -7,7 +7,7 @@ class Contact
 
     }
 
-    public function findByUser(int $userId): array
+    public function findByUserId(int $userId): array
     {
         $stmt = $this->pdo->prepare('SELECT ID as id, FirstName as firstName, LastName as lastName, Phone as phone, Email as email FROM Contacts WHERE UserID = :userId');
         $stmt->execute([':userId' => $userId]);
