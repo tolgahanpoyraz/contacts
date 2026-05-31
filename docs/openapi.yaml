@@ -3,6 +3,7 @@ info:
   title: Personal Contacts Manager API
   description: A RESTful API for managing contacts with JWT-based authentication.
   version: "1.0.0"
+host: "localhost:8000"
 basePath: "/"
 schemes:
   - https
@@ -69,7 +70,7 @@ paths:
           name: body
           required: true
           schema:
-            $ref: "#/definitions/Credentials"
+            $ref: "#/definitions/RegisterInput"
       responses:
         201:
           description: Registration successful
@@ -104,7 +105,7 @@ paths:
   /contacts:
     get:
       summary: Get all contacts or search by name/email
-      description: Returns all contacts for the authenticated user. Optionally filters by a partial match using the `q` query parameter (matches against name or email).
+      description: Returns all contacts for the authenticated user. Optionally filters by a partial match using the `q` query parameter (matches against first name, last name, or email).
       security:
         - BearerAuth: []
       parameters:
@@ -112,7 +113,7 @@ paths:
           name: q
           type: string
           required: false
-          description: Partial match search string (matches against name or email)
+          description: Partial match search string (matches against first name, last name, or email)
       responses:
         200:
           description: Contacts retrieved successfully
@@ -122,11 +123,13 @@ paths:
             application/json:
               contacts:
                 - id: 1
-                  name: "John Doe"
+                  firstName: "John"
+                  lastName: "Doe"
                   email: "johndoe@mail.com"
                   phone: "555-0142"
                 - id: 2
-                  name: "Jane Doe"
+                  firstName: "Jane"
+                  lastName: "Doe"
                   email: "janedoe@mail.com"
                   phone: "555-0198"
         401:
@@ -164,7 +167,8 @@ paths:
             application/json:
               contact:
                 id: 3
-                name: "John Doe"
+                firstName: "John"
+                lastName: "Doe"
                 email: "johndoe@mail.com"
                 phone: "555-0142"
         400:
@@ -173,7 +177,7 @@ paths:
             $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
-              error: "Invalid field value"
+              error: "Missing required field"
               field: "email"
         401:
           description: Unauthorized — missing or invalid JWT
@@ -216,7 +220,8 @@ paths:
             application/json:
               contact:
                 id: 1
-                name: "John Doe"
+                firstName: "John"
+                lastName: "Doe"
                 email: "johndoe@mail.com"
                 phone: "555-0199"
         400:
@@ -299,6 +304,27 @@ definitions:
         type: string
         example: "pass"
 
+  RegisterInput:
+    type: object
+    required:
+      - username
+      - password
+      - firstName
+      - lastName
+    properties:
+      username:
+        type: string
+        example: "user"
+      password:
+        type: string
+        example: "pass"
+      firstName:
+        type: string
+        example: "John"
+      lastName:
+        type: string
+        example: "Doe"
+
   AuthResponse:
     type: object
     properties:
@@ -312,9 +338,12 @@ definitions:
       id:
         type: integer
         example: 1
-      name:
+      firstName:
         type: string
-        example: "John Doe"
+        example: "John"
+      lastName:
+        type: string
+        example: "Doe"
       email:
         type: string
         example: "johndoe@mail.com"
@@ -325,32 +354,40 @@ definitions:
   ContactInput:
     type: object
     required:
-      - name
+      - firstName
+      - lastName
+      - phone
       - email
     properties:
-      name:
+      firstName:
         type: string
-        example: "John Doe"
-      email:
+        example: "John"
+      lastName:
         type: string
-        example: "johndoe@mail.com"
+        example: "Doe"
       phone:
         type: string
         example: "555-0142"
+      email:
+        type: string
+        example: "johndoe@mail.com"
 
   ContactPatch:
     type: object
     description: All fields are optional. Only provided fields will be updated.
     properties:
-      name:
+      firstName:
         type: string
-        example: "John Doe"
-      email:
+        example: "John"
+      lastName:
         type: string
-        example: "johndoe@mail.com"
+        example: "Doe"
       phone:
         type: string
         example: "555-0199"
+      email:
+        type: string
+        example: "johndoe@mail.com"
 
   ContactResponse:
     type: object
