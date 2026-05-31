@@ -25,5 +25,6 @@ $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 match([$method, $path]) {
     ['GET', '/'] => print('Hello, world!'),
     ['POST', '/register'] => $authController->register(),
+    ['POST', '/login'] => $authController->login(),
     default => http_response_code(404),
 };
