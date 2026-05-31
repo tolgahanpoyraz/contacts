@@ -17,6 +17,6 @@ jobs:
           username: root
           key: ${{ secrets.DO_SSH_KEY }}
           script: |
-            cd /var/www/html
+            cd /var/www/contacts-app
             git fetch origin
             git reset --hard origin/main
