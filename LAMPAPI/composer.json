@@ -1,0 +1,9 @@
+{
+    "name": "cop4331/contacts-api",
+    "description": "API for the contacts manager",
+    "type": "project",
+    "require": {
+        "firebase/php-jwt": "^7.0",
+        "vlucas/phpdotenv": "^5.6"
+    }
+}
