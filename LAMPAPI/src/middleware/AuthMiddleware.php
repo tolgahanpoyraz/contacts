@@ -10,8 +10,9 @@ class AuthMiddleware
         $header = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
 
         if (!str_starts_with($header, 'Bearer ')) {
+            header('Content-Type: application/json');
             http_response_code(401);
-            echo json_encode(['error' => 'Invalid credentials']);
+            echo json_encode(['error' => 'Unauthorized']);
             exit();
         }
 
@@ -19,10 +20,11 @@ class AuthMiddleware
 
         try {
             $decoded = JWT::decode($token, new Key($_ENV['JWT_SECRET'], 'HS256'));
-            return $decoded->user_id;
+            return $decoded->userId;
         } catch (Exception $e) {
+            header('Content-Type: application/json');
             http_response_code(401);
-            echo json_encode(['error' => 'Invalid credentials']);
+            echo json_encode(['error' => 'Unauthorized']);
             exit();
         }
 

@@ -1,9 +1,15 @@
 <?php
 
 require_once __DIR__ . '/vendor/autoload.php';
+
 require_once __DIR__ . '/src/models/User.php';
 require_once __DIR__ . '/src/models/Contact.php';
+
+require_once __DIR__ . '/src/middleware/AuthMiddleware.php';
+
+require_once __DIR__ . '/src/controllers/Controller.php';
 require_once __DIR__ . '/src/controllers/AuthController.php';
+require_once __DIR__ . '/src/controllers/ContactController.php';
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
@@ -20,17 +26,27 @@ $userModel = new User($pdo);
 $contactModel = new Contact($pdo);
 
 $authController = new AuthController($userModel);
+$contactController = new ContactController($contactModel);
 
 $method = $_SERVER['REQUEST_METHOD'];
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $path = preg_replace('#^/api#', '', $path); # Strip the /api prefix from the url
 
-match([$method, $path]) {
-    ['GET', '/'] => (function() {
-        header('Content-Type: text/html');
-        readfile(__DIR__ . '/../index.html');
-    })(),
-    ['POST', '/register'] => $authController->register(),
-    ['POST', '/login'] => $authController->login(),
-    default => http_response_code(404),
-};
+try {
+    match([$method, $path]) {
+        ['GET', '/'] => (function() {
+            header('Content-Type: text/html');
+            readfile(__DIR__ . '/../index.html');
+        })(),
+        ['POST', '/register'] => $authController->register(),
+        ['POST', '/login'] => $authController->login(),
+        ['GET', '/contacts'] => $contactController->getContacts(),
+        ['POST', '/contacts'] => $contactController->addContact(),
+        default => http_response_code(404),
+    };
+} catch (Throwable $e) {
+    error_log($e->getMessage());
+    header('Content-Type: application/json');
+    http_response_code(500);
+    echo json_encode(['error' => 'Internal server error']);
+}
