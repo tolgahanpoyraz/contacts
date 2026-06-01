@@ -37,5 +37,6 @@ match([$method, $path]) {
     ['POST', '/register'] => $authController->register(),
     ['POST', '/login'] => $authController->login(),
     ['GET', '/contacts'] => $contactController->getContacts(),
+    ['POST', '/contacts'] => $contactController->addContact(),
     default => http_response_code(404),
 };
