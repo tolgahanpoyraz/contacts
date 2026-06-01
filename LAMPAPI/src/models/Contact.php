@@ -25,7 +25,7 @@ class Contact
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function addContact(int $userId, string $firstName, string $lastName, string $phone, string $email): array|false
+    public function addContact(int $userId, string $firstName, string $lastName, string $phone, string $email): int
     {
         $stmt = $this->pdo->prepare('INSERT INTO Contacts (UserID, FirstName, LastName, Phone, Email) VALUES (:userId, :firstName, :lastName, :phone, :email)');
         $stmt->execute([':userId' => $userId,
@@ -34,6 +34,6 @@ class Contact
                         ':phone' => $phone,
                         ':email' => $email,
                         ]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        return (int) $this->pdo->lastInsertId();
     }
 }

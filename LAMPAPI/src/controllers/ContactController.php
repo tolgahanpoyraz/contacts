@@ -15,6 +15,29 @@ class ContactController extends Controller
         $this->json(200, ['contacts' => $contacts]);
     }
 
+    public function addContact(): void
+    {
+        $userId = AuthMiddleware::verify();
+        $body = $this->readJson();
+
+        if (!$this->requireFields($body, ['firstName', 'lastName', 'phone', 'email'])) {
+            return;
+        }
+
+        if (!filter_var($body['email'], FILTER_VALIDATE_EMAIL)) {
+            $this->json(400, ['error' => 'Invalid email format', 'fields' => ['email']]);
+            return;
+        }
+
+        $id = $this->contactModel->addContact($userId, $body['firstName'], $body['lastName'], $body['phone'], $body['email']);
+        $this->json(201, ['contact' => [
+            'id' => $id,
+            'firstName' => $body['firstName'],
+            'lastName' => $body['lastName'],
+            'phone' => $body['phone'],
+            'email' => $body['email'],
+        ]]);
+    }
 
 
 }
