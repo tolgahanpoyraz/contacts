@@ -183,3 +183,38 @@ function searchColor()
 	}
 	
 }
+
+function deleteColor()
+{
+	let colorToDelete = document.getElementById("deleteText").value;
+	document.getElementById("colorDeleteResult").innerHTML="";
+
+	if(!confirm("Are you sure you want to delete: " + colorToDelete + "from your contacts list?"))
+	{
+		return;
+	}
+
+	let tmp = {color:colorToDelete, userId:userId};
+	let jsonPayload=JSON.stringify(tmp);
+
+	let url=urlBase + '/DeleteColor.' + extension;
+
+	let xhr=new XMLHttpRequest();
+	xhr.open("POST", url, true);
+	xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
+	try
+	{
+		xhr.onreadystatechange = function()
+		{
+			if(this.readyState == 4 && this.status == 200)
+			{
+				document.getElementById("colorDeleteResult").innerHTML="Contact has been deleted";
+			}
+		};
+		xhr.send(jsonPayload);
+	}
+	catch(err)
+	{
+		document.getElementById("colorDeleteResult").innerHTML = err.message;
+	}
+}
