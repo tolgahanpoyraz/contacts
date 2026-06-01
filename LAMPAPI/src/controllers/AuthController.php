@@ -21,10 +21,6 @@ class AuthController extends Controller
         } catch (UsernameTakenException) {
             $this->json(409, ['error' => 'Username already taken']);
             return;
-        } catch (Throwable $e) {
-            error_log($e->getMessage());
-            $this->json(500, ['error' => 'Internal server error']);
-            return;
         }
 
         $this->json(201, ['token' => $this->issueToken($userId)]);
