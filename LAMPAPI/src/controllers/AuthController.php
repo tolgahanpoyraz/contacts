@@ -23,7 +23,11 @@ class AuthController extends Controller
             return;
         }
 
-        $this->json(201, ['token' => $this->issueToken($userId)]);
+        $this->json(201, [
+            'token' => $this->issueToken($userId),
+            'firstName' => $body['firstName'],
+            'lastName' => $body['lastName'],
+        ]);
     }
 
     public function login(): void
@@ -41,7 +45,11 @@ class AuthController extends Controller
             return;
         }
 
-        $this->json(200, ['token' => $this->issueToken($user['id'])]);
+        $this->json(200, [
+            'token' => $this->issueToken($user['id']),
+            'firstName' => $user['firstName'],
+            'lastName' => $user['lastName'],
+        ]);
     }
 
     private function issueToken(int $userId): string

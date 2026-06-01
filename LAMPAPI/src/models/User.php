@@ -9,7 +9,7 @@ class User
 
     public function findByUsername(string $username): array|false
     {
-        $stmt = $this->pdo->prepare('SELECT ID as id, Login as login, Password as password FROM Users WHERE Login = :username');
+        $stmt = $this->pdo->prepare('SELECT ID as id, Login as login, Password as password, FirstName as firstName, LastName as lastName FROM Users WHERE Login = :username');
         $stmt->execute([':username' => $username]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
