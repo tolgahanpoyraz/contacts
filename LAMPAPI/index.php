@@ -1,8 +1,11 @@
 <?php
 
 require_once __DIR__ . '/vendor/autoload.php';
+
 require_once __DIR__ . '/src/models/User.php';
 require_once __DIR__ . '/src/models/Contact.php';
+
+require_once __DIR__ . '/src/controllers/Controller.php';
 require_once __DIR__ . '/src/controllers/AuthController.php';
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
