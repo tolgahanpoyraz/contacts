@@ -5,8 +5,11 @@ require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/src/models/User.php';
 require_once __DIR__ . '/src/models/Contact.php';
 
+require_once __DIR__ . '/src/middleware/AuthMiddleware.php';
+
 require_once __DIR__ . '/src/controllers/Controller.php';
 require_once __DIR__ . '/src/controllers/AuthController.php';
+require_once __DIR__ . '/src/controllers/ContactController.php';
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
@@ -23,6 +26,7 @@ $userModel = new User($pdo);
 $contactModel = new Contact($pdo);
 
 $authController = new AuthController($userModel);
+$contactController = new ContactController($contactModel);
 
 $method = $_SERVER['REQUEST_METHOD'];
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -32,5 +36,6 @@ match([$method, $path]) {
     ['GET', '/'] => print('Hello, world!'),
     ['POST', '/register'] => $authController->register(),
     ['POST', '/login'] => $authController->login(),
+    ['GET', '/contacts'] => $contactController->getContacts(),
     default => http_response_code(404),
 };
