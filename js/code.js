@@ -110,10 +110,27 @@ function doLogout()
 
 function addColor()
 {
-	let newColor = document.getElementById("colorText").value;
-	document.getElementById("colorAddResult").innerHTML = "";
+	let first = document.getElementById("firstName").value;
+	let last = document.getElementById("lastName").value;
+	let email = document.getElementById("contactEmail").value;
+	let phone = document.getElementById("contactPhone").value;
+	
+	document.getElementById("contactAddResult").innerHTML = "";
 
-	let tmp = {color:newColor,userId,userId};
+	if(first === "" && last === "")
+	{
+		document.getElementById("contactAddResult").innerHTML = "Please include a name for Contact";
+		return;
+	}
+
+	let emailRegex=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+	if(email !=="" && !emailRegex.test(email))
+	{
+		document.getElementById("contactAddResult").innerHTML = "Please enter a valid email address";
+		return;
+	}
+
+	let tmp = {first:first, last: last, email:email, phone:phone};
 	let jsonPayload = JSON.stringify( tmp );
 
 	let url = urlBase + '/AddColor.' + extension;
@@ -127,14 +144,14 @@ function addColor()
 		{
 			if (this.readyState == 4 && this.status == 200) 
 			{
-				document.getElementById("colorAddResult").innerHTML = "Color has been added";
+				document.getElementById("contactAddResult").innerHTML = "Contact has been added";
 			}
 		};
 		xhr.send(jsonPayload);
 	}
 	catch(err)
 	{
-		document.getElementById("colorAddResult").innerHTML = err.message;
+		document.getElementById("contactAddResult").innerHTML = err.message;
 	}
 	
 }
@@ -182,4 +199,39 @@ function searchColor()
 		document.getElementById("colorSearchResult").innerHTML = err.message;
 	}
 	
+}
+
+function deleteColor()
+{
+	let colorToDelete = document.getElementById("deleteText").value;
+	document.getElementById("colorDeleteResult").innerHTML="";
+
+	if(!confirm("Are you sure you want to delete: " + colorToDelete + "from your contacts list?"))
+	{
+		return;
+	}
+
+	let tmp = {color:colorToDelete, userId:userId};
+	let jsonPayload=JSON.stringify(tmp);
+
+	let url=urlBase + '/DeleteColor.' + extension;
+
+	let xhr=new XMLHttpRequest();
+	xhr.open("POST", url, true);
+	xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
+	try
+	{
+		xhr.onreadystatechange = function()
+		{
+			if(this.readyState == 4 && this.status == 200)
+			{
+				document.getElementById("colorDeleteResult").innerHTML="Contact has been deleted";
+			}
+		};
+		xhr.send(jsonPayload);
+	}
+	catch(err)
+	{
+		document.getElementById("colorDeleteResult").innerHTML = err.message;
+	}
 }

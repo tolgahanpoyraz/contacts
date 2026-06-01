@@ -34,6 +34,10 @@ $path = preg_replace('#^/api#', '', $path); # Strip the /api prefix from the url
 
 try {
     match([$method, $path]) {
+        ['GET', '/'] => (function() {
+            header('Content-Type: text/html');
+            readfile(__DIR__ . '/../index.html');
+        })(),
         ['POST', '/register'] => $authController->register(),
         ['POST', '/login'] => $authController->login(),
         ['GET', '/contacts'] => $contactController->getContacts(),
@@ -46,4 +50,3 @@ try {
     http_response_code(500);
     echo json_encode(['error' => 'Internal server error']);
 }
-
