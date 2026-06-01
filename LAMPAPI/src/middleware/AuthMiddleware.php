@@ -19,7 +19,7 @@ class AuthMiddleware
 
         try {
             $decoded = JWT::decode($token, new Key($_ENV['JWT_SECRET'], 'HS256'));
-            return $decoded->user_id;
+            return $decoded->userId;
         } catch (Exception $e) {
             http_response_code(401);
             echo json_encode(['error' => 'Invalid credentials']);
