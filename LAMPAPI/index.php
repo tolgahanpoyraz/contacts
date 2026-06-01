@@ -26,7 +26,10 @@ $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $path = preg_replace('#^/api#', '', $path); # Strip the /api prefix from the url
 
 match([$method, $path]) {
-    ['GET', '/'] => print('Hello, world!'),
+    ['GET', '/'] => (function() {
+        header('Content-Type: text/html');
+        readfile(__DIR__ . '/../index.html');
+    })(),
     ['POST', '/register'] => $authController->register(),
     ['POST', '/login'] => $authController->login(),
     default => http_response_code(404),
