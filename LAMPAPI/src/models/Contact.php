@@ -7,10 +7,21 @@ class Contact
 
     }
 
-    public function findByUserId(int $userId): array
+    public function findByUserId(int $userId, ?string $search = null): array
     {
-        $stmt = $this->pdo->prepare('SELECT ID as id, FirstName as firstName, LastName as lastName, Phone as phone, Email as email FROM Contacts WHERE UserID = :userId');
-        $stmt->execute([':userId' => $userId]);
+        $sql = 'SELECT ID as id, FirstName as firstName, LastName as lastName, Phone as phone, Email as email ' .
+               'FROM Contacts WHERE UserID = :userId';
+        $params = [':userId' => $userId];
+
+        if ($search !== null && $search !== '') {
+            $sql .= ' AND (FirstName LIKE :search OR LastName LIKE :search OR Email LIKE :search)';
+            $params[':search'] = '%' . $search . '%';
+        }
+
+        $sql .= ' ORDER BY FirstName ASC, LastName ASC';
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
