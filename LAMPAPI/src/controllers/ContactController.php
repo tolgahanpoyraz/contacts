@@ -43,7 +43,7 @@ class ContactController extends Controller
     {
         $userId = AuthMiddleware::verify();
         $body = $this->readJson();
-
+    
         if (!$this->requireFields($body, ['firstName', 'lastName', 'phone', 'email'])) {
             return;
         }

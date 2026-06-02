@@ -35,6 +35,8 @@ $dispatcher = FastRoute\simpleDispatcher(function(RouteCollector $routes) use ($
     $routes->post('/login', fn() => $authController->login());
     $routes->get('/contacts', fn() => $contactController->getContacts());
     $routes->post('/contacts', fn() => $contactController->addContact());
+    $routes->patch('/contacts/{id:\d+}', fn($vars) => $contactController->editContact((int) $vars['id']));
+    $routes->delete('/contacts/{id:\d+}', fn($vars) => $contactController->deleteContact((int) $vars['id']));
 });
 
 $method = $_SERVER['REQUEST_METHOD'];
