@@ -26,7 +26,6 @@ abstract class Controller
 
     protected function json(int $code, array $data): void
     {
-        header('Content-Type: application/json');
         http_response_code($code);
         echo json_encode($data);
     }
