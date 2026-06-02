@@ -43,21 +43,13 @@ class ContactController extends Controller
     {
         $userId = AuthMiddleware::verify();
         $body = $this->readJson();
-    
-        if (!$this->requireFields($body, ['firstName', 'lastName', 'phone', 'email'])) {
-            return;
-        }
 
-        if (!filter_var($body['email'], FILTER_VALIDATE_EMAIL)) {
+        if ($body['email'] && !filter_var($body['email'], FILTER_VALIDATE_EMAIL)) {
             $this->json(400, ['error' => 'Invalid email format', 'fields' => ['email']]);
             return;
         }
 
         $contact = $this->contactModel->findById($id);
-        if (!$contact || $contact['user_id'] !== $userId) {
-            $this->json(404, ['error' => 'Contact not found']);
-            return;
-        }
 
         $this->contactModel->updateContact($id, $body['firstName'], $body['lastName'], $body['phone'], $body['email']);
         $this->json(200, ['contact' => [
@@ -72,12 +64,6 @@ class ContactController extends Controller
     public function deleteContact($id): void
     {
         $userId = AuthMiddleware::verify();
-        $contact = $this->contactModel->findById($id);
-        if (!$contact || $contact['user_id'] !== $userId) {
-            $this->json(404, ['error' => 'Contact not found']);
-            return;
-        }
-
         $this->contactModel->deleteContact($id);
         $this->json(204);
     }

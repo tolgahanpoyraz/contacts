@@ -36,4 +36,43 @@ class Contact
                         ]);
         return (int) $this->pdo->lastInsertId();
     }
+
+    public function findById(int $id): ?array
+    {
+        $stmt = $this->pdo->prepare('SELECT * FROM Contacts WHERE ID = :id');
+        $stmt->execute([':id' => $id]);
+        $contact = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $contact ?: null;
+    }
+
+    public function updateContact(int $id, ?string $firstName, ?string $lastName, ?string $phone, ?string $email): void
+    {
+        $fields = [];
+        $params = [':id' => $id];
+
+        if ($firstName !== null) {
+            $fields[] = 'FirstName = :firstName';
+            $params[':firstName'] = $firstName;
+        }
+        if ($lastName !== null) {
+            $fields[] = 'LastName = :lastName';
+            $params[':lastName'] = $lastName;
+        }
+        if ($phone !== null) {
+            $fields[] = 'Phone = :phone';
+            $params[':phone'] = $phone;
+        }
+        if ($email !== null) {
+            $fields[] = 'Email = :email';
+            $params[':email'] = $email;
+        }
+
+        if (empty($fields)) {
+            return;
+        }
+
+        $sql = 'UPDATE Contacts SET ' . implode(', ', $fields) . ' WHERE ID = :id';
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+    }
 }
