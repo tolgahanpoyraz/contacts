@@ -1,7 +1,6 @@
-// const urlBase = 'http://COP4331-9.com/api';
-// const extension = 'php';
+const urlBase = 'http://COP4331-9.com/api';
+const extension = 'php';
 
-const urlBase = 'http://localhost:8000';
 
 let userId = 0;
 let firstName = "";
