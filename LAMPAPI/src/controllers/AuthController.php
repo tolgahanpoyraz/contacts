@@ -25,6 +25,7 @@ class AuthController extends Controller
 
         $this->json(201, [
             'token' => $this->issueToken($userId),
+            'username' => $body['username'],
             'firstName' => $body['firstName'],
             'lastName' => $body['lastName'],
         ]);
@@ -47,6 +48,7 @@ class AuthController extends Controller
 
         $this->json(200, [
             'token' => $this->issueToken($user['id']),
+            'username' => $body['username'],
             'firstName' => $user['firstName'],
             'lastName' => $user['lastName'],
         ]);
