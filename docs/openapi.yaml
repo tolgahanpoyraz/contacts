@@ -38,6 +38,7 @@ paths:
           examples:
             application/json:
               token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+              username: "test_user"
               firstName: "John"
               lastName: "Doe"
         400:
@@ -82,6 +83,7 @@ paths:
           examples:
             application/json:
               token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+              username: "test_user"
               firstName: "John"
               lastName: "Doe"
         400:
@@ -342,6 +344,9 @@ definitions:
       token:
         type: string
         example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+      username:
+        type: string
+        example: test_user
       firstName:
         type: string
         example: John
