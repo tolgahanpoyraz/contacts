@@ -1,230 +1,111 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ContactVault — Login</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Jost:wght@300;400;600&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="css/styles.css"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contacts App</title>
   <style>
-    /* Page-specific layout */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #064789;
+      --surface:  #ffffff;
+      --accent:   #FF7D00;
+      --text:     #EBF2FA;
+      --muted:    #FFECD1;
+      --btn:      #15616D;
+      --font:     'Georgia', serif;
+    }
+
     body {
-      display: flex; align-items: center; justify-content: center;
-      min-height: 100vh; padding: 1.5rem;
-      background: radial-gradient(ellipse at 60% 40%, #d8f3dc 0%, var(--bg) 55%);
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
- 
-    .login-wrapper { width: 100%; max-width: 400px; }
- 
-    .login-header { text-align: center; margin-bottom: 2rem; }
-    .login-header h1 { font-size: 2.4rem; color: var(--accent); }
-    .login-header p  { color: var(--muted); font-size: 0.9rem; margin-top: 0.3rem; }
- 
-    /* Tab toggle */
-    .tab-row {
-      display: flex; background: var(--surface2);
-      border-radius: 8px; padding: 3px; margin-bottom: 1.6rem;
-      border: 1px solid var(--border);
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 3rem;
+      border-bottom: 1px solid #8babf1;
     }
-    .tab-btn {
-      flex: 1; padding: 0.5rem; background: none; border: none;
-      border-radius: 6px; color: var(--muted); cursor: pointer;
-      font-size: 0.9rem; font-weight: 600; font-family: var(--font-body);
-      transition: all 0.2s;
+
+    .logo { font-size: 1.25rem; letter-spacing: 0.05em; }
+
+    nav a {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.9rem;
+      padding: 0.5rem 1.25rem;
+      border: 1px solid #8babf1;
+      border-radius: 6px;
+      transition: border-color 0.2s;
     }
-    .tab-btn.active {
-      background: var(--surface); color: var(--accent);
-      box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+    nav a:hover { border-color: var(--accent); }
+
+    .hero {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 4rem 2rem;
     }
- 
-    .divider {
-      text-align: center; color: var(--muted); font-size: 0.78rem;
-      margin: 1rem 0; position: relative;
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
     }
-    .divider::before, .divider::after {
-      content: ''; position: absolute; top: 50%;
-      width: 42%; height: 1px; background: var(--border);
+
+    .hero h1 span { color: var(--accent); }
+
+    .hero p {
+      color: var(--muted);
+      font-size: 1.1rem;
+      max-width: 480px;
+      line-height: 1.7;
+      margin-bottom: 2.5rem;
     }
-    .divider::before { left: 0; }
-    .divider::after  { right: 0; }
- 
-    .error-msg {
-      background: #fef2f2; border: 1px solid #fecaca;
-      color: var(--danger); padding: 0.65rem 0.9rem;
-      border-radius: 8px; font-size: 0.85rem;
-      margin-bottom: 1rem; display: none;
+
+    .cta-group { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+
+    .btn {
+      display: inline-block;
+      padding: 0.75rem 2rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-family: var(--font);
+      cursor: pointer;
+      transition: opacity 0.2s;
     }
-    .error-msg.show { display: block; }
+    .btn:hover { opacity: 0.85; }
+
+    .btn-primary { background: var(--accent); color: #fff; border: none; }
+    .btn-outline  { background: transparent; color: var(--text); border: 1px solid #8babf1; }
   </style>
 </head>
 <body>
- 
-<div class="login-wrapper">
-  <div class="login-header">
-    <h1>ContactVault</h1>
-    <p>COP 4331 — Small Project</p>
-  </div>
- 
-  <div class="card">
- 
-    <!-- ── Tab Toggle ── -->
-    <div class="tab-row">
-      <button class="tab-btn active" id="tabLogin"    onclick="switchTab('login')">Login</button>
-      <button class="tab-btn"        id="tabRegister" onclick="switchTab('register')">Register</button>
-    </div>
- 
-    <!-- ── Error Banner ── -->
-    <div class="error-msg" id="errorMsg"></div>
- 
-    <!-- ════════ LOGIN FORM ════════ -->
-    <div id="loginForm">
-      <div class="form-group">
-        <label for="loginUser">Username</label>
-        <input class="form-input" type="username" id="loginUser" placeholder="JoeD" autocomplete="username"/>
-      </div>
-      <div class="form-group">
-        <label for="loginPass">Password</label>
-        <input class="form-input" type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password"/>
-      </div>
-      <button class="btn btn-primary btn-block" onclick="doLogin()">Sign In</button>
-    </div>
- 
-    <!-- ════════ REGISTER FORM ════════ -->
-    <div id="registerForm" style="display:none">
-      <div class="form-row">
-      <div class="form-group">
-        <label for="regEmail">Username</label>
-        <input class="form-input" type="username" id="regUser" placeholder="JaneD"/>
-      </div>
-      <div class="form-group">
-        <label for="regPass">Password</label>
-        <input class="form-input" type="password" id="regPass" placeholder="At least 8 characters"/>
-      </div>
-      <button class="btn btn-primary btn-block" onclick="doRegister()">Create Account</button>
-    </div>
- 
-  </div><!-- /.card -->
-</div><!-- /.login-wrapper -->
- 
-<!-- TOAST (shared component) -->
-<div id="toast"></div>
- 
-<script>
-  const BASE_URL = "https://cop4331-9.com/api";
- 
-  /* ─── Tab switching ─── */
-  function switchTab(tab) {
-    document.getElementById("loginForm").style.display    = tab === "login"    ? "" : "none";
-    document.getElementById("registerForm").style.display = tab === "register" ? "" : "none";
-    document.getElementById("tabLogin").classList.toggle("active",    tab === "login");
-    document.getElementById("tabRegister").classList.toggle("active", tab === "register");
-    hideError();
-  }
- 
-  /* ─── Error helper ─── */
-  function showError(msg) {
-    const el = document.getElementById("errorMsg");
-    el.textContent = msg;
-    el.classList.add("show");
-  }
-  function hideError() {
-    document.getElementById("errorMsg").classList.remove("show");
-  }
 
-  /* ─── LOGIN ───────────────────────────────────────────────
-	 POST /api/login
-	 Body:    { login: username, password }
-	 Returns: { id, token } or { error }
-	 ─────────────────────────────────────────────────────────── */
+  <nav>
+    <span class="logo">Contacts</span>
+    <a href="login.html">Login</a>
+  </nav>
 
-  async function doLogin() {
-    const username    = document.getElementById("loginUser").value.trim();
-    const password = document.getElementById("loginPass").value;
- 
-    if (!username || !password) return showError("Please fill in all fields.");
-    hideError();
- 
-    var jsonPayload = JSON.stringify({ login: username, password: password });
- 
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", BASE_URL + "/login", false);
-    xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
- 
-    try {
-      xhr.send(jsonPayload);
-      var jsonObject = JSON.parse(xhr.responseText);
- 
-      if (xhr.status === 200 && jsonObject.id) {
-        // Store session data
-        sessionStorage.setItem("token",     jsonObject.token);
-        sessionStorage.setItem("userId",    jsonObject.id);
-        // Redirect to contacts dashboard
-        window.location.href = "pages/contacts.html";
-      } else {
-        showError(jsonObject.error || "Invalid username or password.");
-      }
-    } catch (e) {
-      showError("Could not connect to server. Check your internet.");
-    }
-  }
- 
-  /* ─── REGISTER ─────────────────────────────────────────────
-     POST /api/register
-     Body:    {login: username, password }
-     Returns: { id } or { error }
-     ─────────────────────────────────────────────────────────── */
-  async function doRegister() {
-    const username  = document.getElementById("regUser").value.trim();
-    const password  = document.getElementById("regPass").value;
- 
-    if (!username || !password) return showError("Please fill in all fields.");
-    if (password.length < 8) return showError("Password must be at least 8 characters.");
-    hideError();
- 
-    var jsonPayload = JSON.stringify({
-      login:     username,    
-      password:  password
-    });
- 
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", BASE_URL + "/register", false);
-    xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
- 
-    try {
-      xhr.send(jsonPayload);
-      var jsonObject = JSON.parse(xhr.responseText);
- 
-      if (xhr.status === 200) {
-        showToast("Account created! Please log in.");
-        switchTab("login");
-      } else {
-        showError(jsonObject.error || "Registration failed.");
-      }
-    } catch (e) {
-      showError("Could not connect to server.");
-    }
-  }
- 
-  /* ─── Toast helper ─── */
-  function showToast(msg) {
-    const el = document.getElementById("toast");
-    el.textContent = msg;
-    el.classList.add("show");
-    setTimeout(() => el.classList.remove("show"), 2800);
-  }
- 
-  /* ─── Auto-redirect if already logged in ─── */
-  if (sessionStorage.getItem("token")) {
-    window.location.href = "pages/contacts.html";
-  }
- 
-  /* ─── Allow Enter key to submit ─── */
-  document.addEventListener("keydown", function (e) {
-    if (e.key === "Enter") {
-      if (document.getElementById("loginForm").style.display !== "none") doLogin();
-      else doRegister();
-    }
-  });
-</script>
+  <main class="hero">
+    <h1>Your contacts,<br /> now <span>organized.</span></h1>
+    <p>A simple, private place to keep everyone that matters. Add, search, and manage your contacts with ease.</p>
+    <div class="cta-group">
+      <a href="login.html" class="btn btn-primary">Get Started</a>
+      <a href="login.html" class="btn btn-outline">Login</a>
+    </div>
+  </main>
+
 </body>
 </html>
