@@ -1,429 +1,397 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Personal Contacts Manager</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contacts App</title>
 
     <script src="js/auth.js"></script>
     <script src="js/api.js"></script>
     <script src="js/contacts.js"></script>
 
     <style>
-        *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
-            --cream: #f5f0e8;
-            --parchment: #ede5d4;
-            --ink: #1a1714;
-            --ink-soft: #3d3730;
-            --ink-faint: #8a7f72;
-            --gold: #b8935a;
-            --gold-light: #d4aa72;
-            --gold-pale: #f0e4cc;
-            --rust: #8b4a2f;
-            --border: rgba(184, 147, 90, 0.25);
-            --shadow: 0 4px 24px rgba(26, 23, 20, 0.08);
-            --shadow-deep: 0 12px 48px rgba(26, 23, 20, 0.14);
+            --bg:      #064789;
+            --surface: #ffffff;
+            --accent:  #FF7D00;
+            --text:    #EBF2FA;
+            --muted:   #FFECD1;
+            --btn:     #2C2A4A;
+            --border:  #8babf1;
+            --font:    'Georgia', serif;
+            --surface-alpha: rgba(255, 255, 255, 0.07);
+            --surface-alpha-hover: rgba(255, 255, 255, 0.12);
         }
 
         body {
-            font-family: 'DM Sans', sans-serif;
-            background-color: var(--cream);
-            color: var(--ink);
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font);
             min-height: 100vh;
-            background-image:
-                radial-gradient(ellipse at 20% 0%, rgba(184, 147, 90, 0.08) 0%, transparent 55%),
-                radial-gradient(ellipse at 80% 100%, rgba(139, 74, 47, 0.06) 0%, transparent 55%);
-        }
-
-        /* ── Layout Shell ── */
-        .app-shell {
-            max-width: 880px;
-            margin: 0 auto;
-            padding: 48px 32px 80px;
-        }
-
-        /* ── Header ── */
-        .app-header {
             display: flex;
-            align-items: flex-end;
+            flex-direction: column;
+        }
+
+        /* ── Nav ── */
+        nav {
+            display: flex;
             justify-content: space-between;
-            padding-bottom: 28px;
+            align-items: center;
+            padding: 1.5rem 3rem;
             border-bottom: 1px solid var(--border);
-            margin-bottom: 40px;
-            animation: fadeDown 0.6s ease both;
         }
 
-        .header-left {}
+        .logo { font-size: 1.25rem; letter-spacing: 0.05em; }
 
-        #title {
-            font-family: 'Cormorant Garamond', serif;
-            font-weight: 300;
-            font-size: 2.8rem;
-            letter-spacing: -0.01em;
-            line-height: 1;
-            color: var(--ink);
+        #userName {
+            font-size: 0.85rem;
+            color: var(--muted);
+            letter-spacing: 0.03em;
         }
 
-        #title span {
-            color: var(--gold);
-            font-style: italic;
-        }
-
-        .header-rule {
-            width: 48px;
-            height: 1px;
-            background: var(--gold);
-            margin-top: 10px;
-        }
-
-        /* ── Logged-in user strip ── */
         #loggedInDiv {
             display: flex;
             align-items: center;
-            gap: 14px;
-            animation: fadeDown 0.6s 0.1s ease both;
-        }
-
-        #userName {
-            font-size: 0.8rem;
-            font-weight: 500;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            color: var(--ink-faint);
+            gap: 1rem;
         }
 
         /* ── Buttons ── */
         .buttons {
-            font-family: 'DM Sans', sans-serif;
-            font-size: 0.75rem;
-            font-weight: 500;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            padding: 9px 20px;
-            border: 1px solid var(--gold);
-            background: transparent;
-            color: var(--gold);
+            font-family: var(--font);
+            font-size: 0.9rem;
             cursor: pointer;
-            border-radius: 2px;
-            transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+            padding: 0.5rem 1.25rem;
+            border-radius: 6px;
+            transition: opacity 0.2s, border-color 0.2s;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text);
+            text-decoration: none;
+            display: inline-block;
         }
 
-        .buttons:hover {
-            background: var(--gold);
-            color: var(--cream);
-            box-shadow: 0 4px 16px rgba(184, 147, 90, 0.3);
-        }
+        .buttons:hover { border-color: var(--accent); opacity: 0.9; }
 
         .buttons.primary {
-            background: var(--gold);
-            color: var(--cream);
-        }
-
-        .buttons.primary:hover {
-            background: var(--gold-light);
-            border-color: var(--gold-light);
-        }
-
-        .buttons.ghost {
+            background: var(--btn);
+            color: #fff;
             border-color: var(--border);
-            color: var(--ink-faint);
         }
 
-        .buttons.ghost:hover {
-            background: var(--parchment);
-            color: var(--ink);
-            box-shadow: none;
+        .buttons.primary:hover { opacity: 0.85; border-color: var(--accent); }
+
+        /* ── Main content shell ── */
+        .app-shell {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 3rem 2rem 5rem;
+            width: 100%;
+        }
+
+        /* ── Page title ── */
+        #title {
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            line-height: 1.1;
+            margin-bottom: 0.5rem;
+        }
+
+        #title span { color: var(--accent); }
+
+        .page-subtitle {
+            color: var(--muted);
+            font-size: 1rem;
+            margin-bottom: 2.5rem;
+            line-height: 1.6;
         }
 
         /* ── Search ── */
         #searchDiv {
             display: flex;
-            gap: 12px;
-            margin-bottom: 36px;
-            animation: fadeUp 0.6s 0.15s ease both;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
         }
 
         #searchText {
             flex: 1;
-            font-family: 'DM Sans', sans-serif;
-            font-size: 0.9rem;
-            padding: 12px 18px;
+            font-family: var(--font);
+            font-size: 0.95rem;
+            padding: 0.65rem 1rem;
+            border-radius: 6px;
             border: 1px solid var(--border);
-            background: rgba(255,255,255,0.5);
-            color: var(--ink);
-            border-radius: 2px;
+            background: var(--surface-alpha);
+            color: var(--text);
             outline: none;
-            transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+            transition: border-color 0.2s, background 0.2s;
         }
 
-        #searchText::placeholder {
-            color: var(--ink-faint);
-            font-weight: 300;
-        }
+        #searchText::placeholder { color: rgba(235, 242, 250, 0.45); }
 
         #searchText:focus {
-            border-color: var(--gold);
-            background: rgba(255,255,255,0.85);
-            box-shadow: 0 0 0 3px rgba(184, 147, 90, 0.12);
+            border-color: var(--accent);
+            background: var(--surface-alpha-hover);
         }
 
-        /* ── Contact List ── */
-        #contactList {
-            margin-bottom: 12px;
-            animation: fadeUp 0.6s 0.2s ease both;
-        }
-
+        /* ── Status message ── */
         #contactsResult {
             display: block;
-            font-size: 0.8rem;
-            color: var(--ink-faint);
-            letter-spacing: 0.04em;
-            margin-bottom: 36px;
+            font-size: 0.85rem;
+            color: var(--muted);
             font-style: italic;
+            margin-bottom: 1.5rem;
+            min-height: 1.2em;
         }
 
-        /* ── Divider between sections ── */
-        .section-divider {
-            width: 100%;
-            height: 1px;
-            background: linear-gradient(to right, var(--border), transparent);
-            margin: 44px 0;
-        }
+        /* ── Contact list ── */
+        #contactList { margin-bottom: 1rem; }
 
-        /* ── Panel cards (Edit / Add) ── */
-        .contact-panel {
-            background: rgba(255, 255, 255, 0.55);
+        .contact {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.9rem 1.2rem;
             border: 1px solid var(--border);
-            border-radius: 4px;
-            padding: 36px 40px;
-            box-shadow: var(--shadow);
-            backdrop-filter: blur(8px);
-            animation: fadeUp 0.6s 0.25s ease both;
+            border-radius: 8px;
+            margin-bottom: 0.6rem;
+            background: var(--surface-alpha);
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .contact:hover {
+            background: var(--surface-alpha-hover);
+            border-color: var(--accent);
+        }
+
+        .contact span {
+            font-size: 0.9rem;
+            color: var(--muted);
+            flex: 1;
+        }
+
+        .contact span:first-child {
+            font-size: 1rem;
+            color: var(--text);
+            font-weight: bold;
+            min-width: 140px;
+        }
+
+        .contact .buttons {
+            padding: 0.35rem 0.9rem;
+            font-size: 0.78rem;
+            flex-shrink: 0;
+        }
+
+        /* ── Divider ── */
+        .section-divider {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 2.5rem 0;
+        }
+
+        /* ── Panel cards (Add / Edit) ── */
+        .contact-panel {
+            background: var(--surface-alpha);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 2rem 2.2rem;
         }
 
         .contact-panel h2 {
-            font-family: 'Cormorant Garamond', serif;
-            font-weight: 400;
-            font-size: 1.6rem;
-            color: var(--ink);
-            margin-bottom: 4px;
-            letter-spacing: -0.01em;
+            font-size: 1.5rem;
+            margin-bottom: 0.3rem;
+            color: var(--text);
         }
 
+        .contact-panel h2 span { color: var(--accent); }
+
         .panel-subtitle {
-            font-size: 0.75rem;
-            color: var(--ink-faint);
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            margin-bottom: 28px;
-            padding-bottom: 20px;
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
             border-bottom: 1px solid var(--border);
+            letter-spacing: 0.03em;
         }
 
         .field-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 14px;
-            margin-bottom: 14px;
+            gap: 0.9rem;
+            margin-bottom: 0.9rem;
         }
 
-        .field-row.single {
-            grid-template-columns: 1fr;
-        }
+        .field-row.single { grid-template-columns: 1fr; }
 
-        .field-wrap {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
+        .field-wrap { display: flex; flex-direction: column; gap: 0.3rem; }
 
         .field-label {
-            font-size: 0.68rem;
-            letter-spacing: 0.1em;
+            font-size: 0.72rem;
+            letter-spacing: 0.08em;
             text-transform: uppercase;
-            color: var(--ink-faint);
-            font-weight: 500;
+            color: var(--muted);
         }
 
         .contact-panel input[type="text"] {
-            font-family: 'DM Sans', sans-serif;
-            font-size: 0.9rem;
-            padding: 11px 14px;
+            font-family: var(--font);
+            font-size: 0.92rem;
+            padding: 0.6rem 0.9rem;
             border: 1px solid var(--border);
-            background: rgba(255, 255, 255, 0.7);
-            color: var(--ink);
-            border-radius: 2px;
+            border-radius: 6px;
+            background: var(--surface-alpha);
+            color: var(--text);
             outline: none;
             width: 100%;
-            transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+            transition: border-color 0.2s, background 0.2s;
         }
 
         .contact-panel input[type="text"]::placeholder {
-            color: rgba(138, 127, 114, 0.5);
+            color: rgba(235, 242, 250, 0.3);
         }
 
         .contact-panel input[type="text"]:focus {
-            border-color: var(--gold);
-            background: #fff;
-            box-shadow: 0 0 0 3px rgba(184, 147, 90, 0.1);
+            border-color: var(--accent);
+            background: var(--surface-alpha-hover);
         }
 
         .panel-actions {
             display: flex;
-            gap: 12px;
-            margin-top: 28px;
-            padding-top: 24px;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+            padding-top: 1.2rem;
             border-top: 1px solid var(--border);
         }
 
-        /* ── Edit panel hidden by default ── */
-        #editContactDiv {
-            margin-bottom: 28px;
-        }
-
-        /* ── Ornamental corner detail ── */
-        .contact-panel {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .contact-panel::before {
-            content: '';
-            position: absolute;
-            top: 0; right: 0;
-            width: 60px; height: 60px;
-            background: linear-gradient(225deg, var(--gold-pale) 0%, transparent 70%);
-            pointer-events: none;
-        }
+        #editContactDiv { margin-bottom: 0; }
 
         /* ── Animations ── */
         @keyframes fadeDown {
-            from { opacity: 0; transform: translateY(-14px); }
+            from { opacity: 0; transform: translateY(-12px); }
             to   { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(14px); }
+            from { opacity: 0; transform: translateY(12px); }
             to   { opacity: 1; transform: translateY(0); }
         }
 
+        nav    { animation: fadeDown 0.5s ease both; }
+        h1     { animation: fadeDown 0.5s 0.05s ease both; }
+        .page-subtitle { animation: fadeDown 0.5s 0.1s ease both; }
+        #searchDiv { animation: fadeUp 0.5s 0.15s ease both; }
+        #contactList { animation: fadeUp 0.5s 0.2s ease both; }
+        .contact-panel { animation: fadeUp 0.5s 0.25s ease both; }
+
         /* ── Responsive ── */
         @media (max-width: 600px) {
-            .app-shell { padding: 28px 18px 60px; }
-            #title { font-size: 2rem; }
-            .app-header { flex-direction: column; align-items: flex-start; gap: 20px; }
+            nav { padding: 1rem 1.25rem; }
+            .app-shell { padding: 2rem 1.25rem 4rem; }
             .field-row { grid-template-columns: 1fr; }
-            .contact-panel { padding: 24px 20px; }
+            .contact-panel { padding: 1.25rem; }
+            .contact { flex-wrap: wrap; }
         }
     </style>
 </head>
 <body>
 
-<div class="app-shell">
-
-    <!-- Header -->
-    <header class="app-header">
-        <div class="header-left">
-            <h1 id="title">Personal <span>Contacts</span></h1>
-            <div class="header-rule"></div>
-        </div>
-
+    <nav>
+        <span class="logo">Contacts</span>
         <div id="loggedInDiv">
             <span id="userName"></span>
-            <button type="button" class="buttons ghost" onclick="doLogout()">Log Out</button>
+            <button type="button" class="buttons" onclick="doLogout()">Log Out</button>
         </div>
-    </header>
+    </nav>
 
-    <!-- Search -->
-    <div id="searchDiv">
-        <input type="text" id="searchText" placeholder="Search by name or email…" />
-        <button type="button" class="buttons primary" onclick="doSearchContacts()">Search</button>
-    </div>
+    <div class="app-shell">
 
-    <!-- Contact List -->
-    <div id="contactList"></div>
-    <span id="contactsResult"></span>
+        <h1 id="title">Your <span>contacts.</span></h1>
+        <p class="page-subtitle">Add, search, and manage everyone that matters.</p>
 
-    <div class="section-divider"></div>
+        <!-- Search -->
+        <div id="searchDiv">
+            <input type="text" id="searchText" placeholder="Search by name or email…" />
+            <button type="button" class="buttons primary" onclick="doSearchContacts()">Search</button>
+        </div>
 
-    <!-- Edit Contact -->
-    <div id="editContactDiv" style="display:none;">
-        <div class="contact-panel">
-            <h2>Edit Contact</h2>
-            <p class="panel-subtitle">Update details below</p>
+        <!-- Contact List -->
+        <div id="contactList"></div>
+        <span id="contactsResult"></span>
 
-            <div class="field-row">
-                <div class="field-wrap">
-                    <label class="field-label">First Name</label>
-                    <input type="text" id="editFirstName" placeholder="First Name" />
+        <hr class="section-divider" />
+
+        <!-- Edit Contact -->
+        <div id="editContactDiv" style="display:none;">
+            <div class="contact-panel">
+                <h2>Edit <span>Contact</span></h2>
+                <p class="panel-subtitle">Update details below</p>
+
+                <div class="field-row">
+                    <div class="field-wrap">
+                        <label class="field-label">First Name</label>
+                        <input type="text" id="editFirstName" placeholder="First Name" />
+                    </div>
+                    <div class="field-wrap">
+                        <label class="field-label">Last Name</label>
+                        <input type="text" id="editLastName" placeholder="Last Name" />
+                    </div>
                 </div>
-                <div class="field-wrap">
-                    <label class="field-label">Last Name</label>
-                    <input type="text" id="editLastName" placeholder="Last Name" />
+                <div class="field-row single">
+                    <div class="field-wrap">
+                        <label class="field-label">Email</label>
+                        <input type="text" id="editEmail" placeholder="Email" />
+                    </div>
+                </div>
+                <div class="field-row single">
+                    <div class="field-wrap">
+                        <label class="field-label">Phone Number</label>
+                        <input type="text" id="editPhone" placeholder="Phone Number" />
+                    </div>
+                </div>
+
+                <div class="panel-actions">
+                    <button type="button" class="buttons primary" onclick="doSaveContact()">Save Changes</button>
+                    <button type="button" class="buttons" onclick="cancelEdit()">Cancel</button>
                 </div>
             </div>
-            <div class="field-row single">
-                <div class="field-wrap">
-                    <label class="field-label">Email</label>
-                    <input type="text" id="editEmail" placeholder="Email" />
-                </div>
-            </div>
-            <div class="field-row single">
-                <div class="field-wrap">
-                    <label class="field-label">Phone Number</label>
-                    <input type="text" id="editPhone" placeholder="Phone Number" />
-                </div>
-            </div>
+            <hr class="section-divider" />
+        </div>
 
-            <div class="panel-actions">
-                <button type="button" class="buttons primary" onclick="doSaveContact()">Save Changes</button>
-                <button type="button" class="buttons ghost" onclick="cancelEdit()">Cancel</button>
+        <!-- Add Contact -->
+        <div id="addContactDiv">
+            <div class="contact-panel">
+                <h2>Add <span>Contact</span></h2>
+                <p class="panel-subtitle">New entry</p>
+
+                <div class="field-row">
+                    <div class="field-wrap">
+                        <label class="field-label">First Name</label>
+                        <input type="text" id="contactFirstName" placeholder="First Name" />
+                    </div>
+                    <div class="field-wrap">
+                        <label class="field-label">Last Name</label>
+                        <input type="text" id="contactLastName" placeholder="Last Name" />
+                    </div>
+                </div>
+                <div class="field-row single">
+                    <div class="field-wrap">
+                        <label class="field-label">Email</label>
+                        <input type="text" id="contactEmail" placeholder="Email" />
+                    </div>
+                </div>
+                <div class="field-row single">
+                    <div class="field-wrap">
+                        <label class="field-label">Phone Number</label>
+                        <input type="text" id="contactPhone" placeholder="Phone Number" />
+                    </div>
+                </div>
+
+                <div class="panel-actions">
+                    <button type="button" class="buttons primary" onclick="doAddContact()">Add Contact</button>
+                </div>
             </div>
         </div>
-        <div class="section-divider"></div>
-    </div>
 
-    <!-- Add Contact -->
-    <div id="addContactDiv">
-        <div class="contact-panel">
-            <h2>Add Contact</h2>
-            <p class="panel-subtitle">New entry</p>
-
-            <div class="field-row">
-                <div class="field-wrap">
-                    <label class="field-label">First Name</label>
-                    <input type="text" id="contactFirstName" placeholder="First Name" />
-                </div>
-                <div class="field-wrap">
-                    <label class="field-label">Last Name</label>
-                    <input type="text" id="contactLastName" placeholder="Last Name" />
-                </div>
-            </div>
-            <div class="field-row single">
-                <div class="field-wrap">
-                    <label class="field-label">Email</label>
-                    <input type="text" id="contactEmail" placeholder="Email" />
-                </div>
-            </div>
-            <div class="field-row single">
-                <div class="field-wrap">
-                    <label class="field-label">Phone Number</label>
-                    <input type="text" id="contactPhone" placeholder="Phone Number" />
-                </div>
-            </div>
-
-            <div class="panel-actions">
-                <button type="button" class="buttons primary" onclick="doAddContact()">Add Contact</button>
-            </div>
-        </div>
-    </div>
-
-</div><!-- /app-shell -->
+    </div><!-- /app-shell -->
 
 </body>
 </html>
