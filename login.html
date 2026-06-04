@@ -140,32 +140,32 @@
  
     <div class="form active" id="form-login">
       <div>
-        <label for="login-username">Username<span style="color: red;">*</span></label>
-        <input type="text" class="form-control username-placeholder" id="login-username" placeholder="username"/>
+        <label for="loginName">Username<span style="color: red;">*</span></label>
+        <input type="text" class="form-control username-placeholder" id="loginName" placeholder="username"/>
       </div>
       <div>
-        <label for="login-password">Password<span style="color: red;">*</span></label>
-        <input type="password" id="login-password" placeholder="••••••••" />
+        <label for="loginPassword">Password<span style="color: red;">*</span></label>
+        <input type="password" id="loginPassword" placeholder="••••••••" />
       </div>
       <button class="btn-submit" onclick="onLogin()">Login</button>
     </div>
  
     <div class="form" id="form-register">
       <div>
-        <label for="register-firstname">First Name<span style="color: red;">*</span></label>
-        <input type="text" id="register-firstname" placeholder="John" />
+        <label for="registerFirstName">First Name<span style="color: red;">*</span></label>
+        <input type="text" id="registerFirstName" placeholder="John" />
       </div>
       <div>
-        <label for="register-lastname">Last Name<span style="color: red;">*</span></label>
-        <input type="text" id="register-lastname" placeholder="Doe" />
+        <label for="registerLastName">Last Name<span style="color: red;">*</span></label>
+        <input type="text" id="registerLastName" placeholder="Doe" />
       </div>
       <div>
-        <label for="register-username">Username<span style="color: red;">*</span></label>
-        <input type="text" class="form-control username-placeholder" id="register-username" placeholder="username"/>
+        <label for="registerUsername">Username<span style="color: red;">*</span></label>
+        <input type="text" class="form-control username-placeholder" id="registerUsername" placeholder="username"/>
       </div>
       <div>
-        <label for="register-password">Password<span style="color: red;">*</span></label>
-        <input type="password" id="register-password" placeholder="••••••••" />
+        <label for="registerPassword">Password<span style="color: red;">*</span></label>
+        <input type="password" id="registerPassword" placeholder="••••••••" />
       </div>
       <button class="btn-submit" onclick="onRegister()">Create Account</button>
     </div>
@@ -173,6 +173,7 @@
 
   <script src="js/api.js"></script>
   <script src="js/auth.js"></script>
+  <script src="js/login.js"></script>
 
   <script>
     if (isLoggedIn()) window.location.href = 'contacts.html';
@@ -186,21 +187,21 @@
     }
  
     async function onLogin() {
-      const username = document.getElementById('login-username').value.trim();
-      const password = document.getElementById('login-password').value.trim();
+      const username = document.getElementById('loginName').value.trim();
+      const password = document.getElementById('loginPassword').value.trim();
 
       if (!username) {
-        document.getElementById('login-username').classList.add('error');
+        document.getElementById('loginName').classList.add('error');
       }
       if (!password) {
-        document.getElementById('login-password').classList.add('error');
+        document.getElementById('loginPassword').classList.add('error');
       }
 
-      document.getElementById('login-username').addEventListener('input', function() {
+      document.getElementById('loginName').addEventListener('input', function() {
         this.classList.remove('error');
         document.getElementById('error-msg').textContent = '';
       });
-      document.getElementById('login-password').addEventListener('input', function() {
+      document.getElementById('loginPassword').addEventListener('input', function() {
         this.classList.remove('error');
         document.getElementById('error-msg').textContent = '';
       });
@@ -208,50 +209,44 @@
       document.getElementById('error-msg').textContent = '';
  
       try {
-        await handleLogin(username, password);
+        await doLogin();
       } catch (err) {
         document.getElementById('error-msg').textContent = err.message;
       }
     }
  
     async function onRegister() {
-      const firstName = document.getElementById('register-firstname').value.trim();
-      const lastName  = document.getElementById('register-lastname').value.trim();
-      const username  = document.getElementById('register-username').value.trim();
-      const password  = document.getElementById('register-password').value.trim();
+      const firstName = document.getElementById('registerFirstName').value.trim();
+      const lastName  = document.getElementById('registerLastName').value.trim();
+      const username  = document.getElementById('registerUsername').value.trim();
+      const password  = document.getElementById('registerPassword').value.trim();
 
       if (!firstName) {
-        document.getElementById('register-firstname').classList.add('error');
+        document.getElementById('registerFirstName').classList.add('error');
       }
       if (!lastName) {
-        document.getElementById('register-lastname').classList.add('error');
+        document.getElementById('registerLastName').classList.add('error');
       }
       if (!username) {
-        document.getElementById('register-username').classList.add('error');
+        document.getElementById('registerUsername').classList.add('error');
       }
       if (!password) {
-        document.getElementById('register-password').classList.add('error');
-      }
-      if (!username) {
-        document.getElementById('register-username').classList.add('error');
-      }
-      if (!password) {
-        document.getElementById('register-password').classList.add('error');
+        document.getElementById('registerPassword').classList.add('error');
       }
 
-      document.getElementById('register-firstname').addEventListener('input', function() {
+      document.getElementById('registerFirstName').addEventListener('input', function() {
         this.classList.remove('error');
         document.getElementById('error-msg').textContent = '';
       });
-      document.getElementById('register-lastname').addEventListener('input', function() {
+      document.getElementById('registerLastName').addEventListener('input', function() {
         this.classList.remove('error');
         document.getElementById('error-msg').textContent = '';
       });
-      document.getElementById('register-username').addEventListener('input', function() {
+      document.getElementById('registerUsername').addEventListener('input', function() {
         this.classList.remove('error');
         document.getElementById('error-msg').textContent = '';
       });
-      document.getElementById('register-password').addEventListener('input', function() {
+      document.getElementById('registerPassword').addEventListener('input', function() {
         this.classList.remove('error');
         document.getElementById('error-msg').textContent = '';
       }); 
@@ -259,7 +254,7 @@
       document.getElementById('error-msg').textContent = '';
  
       try {
-        await handleRegister(username, password, firstName, lastName);
+        await doRegister();
       } catch (err) {
         document.getElementById('error-msg').textContent = err.message;
       }
