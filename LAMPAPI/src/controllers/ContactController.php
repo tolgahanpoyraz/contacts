@@ -44,27 +44,44 @@ class ContactController extends Controller
         $userId = AuthMiddleware::verify();
         $body = $this->readJson();
 
-        if ($body['email'] && !filter_var($body['email'], FILTER_VALIDATE_EMAIL)) {
+        if (($body['email'] ?? null) && !filter_var($body['email'], FILTER_VALIDATE_EMAIL)) {
             $this->json(400, ['error' => 'Invalid email format', 'fields' => ['email']]);
             return;
         }
 
-        $contact = $this->contactModel->findById($id);
+        $contact = $this->contactModel->findByContactId($id);
+        if ($contact === false || $contact['userId'] !== $userId) {
+            $this->json(404, ['error' => 'Contact not found.']);
+            return;
+        }
 
-        $this->contactModel->updateContact($id, $body['firstName'], $body['lastName'], $body['phone'], $body['email']);
+        $firstName = $body['firstName'] ?? $contact['firstName'];
+        $lastName = $body['lastName'] ?? $contact['lastName'];
+        $phone = $body['phone'] ?? $contact['phone'];
+        $email = $body['email'] ?? $contact['email'];
+
+        $this->contactModel->updateContact($id, $firstName, $lastName, $phone, $email);
         $this->json(200, ['contact' => [
             'id' => $id,
-            'firstName' => $body['firstName'],
-            'lastName' => $body['lastName'],
-            'phone' => $body['phone'],
-            'email' => $body['email'],
+            'firstName' => $firstName,
+            'lastName' => $lastName,
+            'phone' => $phone,
+            'email' => $email,
         ]]);
     }
 
-    public function deleteContact($id): void
+    public function deleteContact(int $contactId): void
     {
         $userId = AuthMiddleware::verify();
-        $this->contactModel->deleteContact($id);
-        $this->json(204);
+
+        $contact = $this->contactModel->findByContactId($contactId);
+
+        if ($contact === false || $contact['userId'] != $userId) {
+            $this->json(404, ['error' => 'Contact not found.']);
+            return;
+        }
+
+        $this->contactModel->deleteContact($contactId);
+        $this->json(204, []);
     }
 }

@@ -37,43 +37,23 @@ class Contact
         return (int) $this->pdo->lastInsertId();
     }
 
-    public function findById(int $id): ?array
+    public function findByContactId(int $id): array|false
     {
-        $stmt = $this->pdo->prepare('SELECT * FROM Contacts WHERE ID = :id');
+        $stmt = $this->pdo->prepare('SELECT ID as id, FirstName as firstName, LastName as lastName, Phone as phone, Email as email, UserID as userId FROM Contacts WHERE ID = :id');
         $stmt->execute([':id' => $id]);
-        $contact = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $contact ?: null;
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function updateContact(int $id, ?string $firstName, ?string $lastName, ?string $phone, ?string $email): void
+    public function updateContact(int $id, string $firstName, string $lastName, string $phone, string $email): void
     {
-        $fields = [];
-        $params = [':id' => $id];
-
-        if ($firstName !== null) {
-            $fields[] = 'FirstName = :firstName';
-            $params[':firstName'] = $firstName;
-        }
-        if ($lastName !== null) {
-            $fields[] = 'LastName = :lastName';
-            $params[':lastName'] = $lastName;
-        }
-        if ($phone !== null) {
-            $fields[] = 'Phone = :phone';
-            $params[':phone'] = $phone;
-        }
-        if ($email !== null) {
-            $fields[] = 'Email = :email';
-            $params[':email'] = $email;
-        }
-
-        if (empty($fields)) {
-            return;
-        }
-
-        $sql = 'UPDATE Contacts SET ' . implode(', ', $fields) . ' WHERE ID = :id';
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute($params);
+        $stmt = $this->pdo->prepare('UPDATE Contacts SET FirstName = :firstName, LastName = :lastName, Phone = :phone, Email = :email WHERE ID = :id');
+        $stmt->execute([
+            ':id' => $id,
+            ':firstName' => $firstName,
+            ':lastName' => $lastName,
+            ':phone' => $phone,
+            ':email' => $email,
+        ]);
     }
 
     public function deleteContact(int $id): void
