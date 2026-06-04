@@ -75,4 +75,10 @@ class Contact
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
     }
+
+    public function deleteContact(int $id): void
+    {
+        $stmt = $this->pdo->prepare('DELETE FROM Contacts WHERE ID = :id');
+        $stmt->execute([':id' => $id]);
+    }
 }

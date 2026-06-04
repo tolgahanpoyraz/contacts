@@ -24,9 +24,11 @@ abstract class Controller
         return true;
     }
 
-    protected function json(int $code, array $data): void
+    protected function json(int $code, array $data = []): void
     {
         http_response_code($code);
-        echo json_encode($data);
+        if ($code !== 204) {
+            echo json_encode($data);
+        }
     }
 }
