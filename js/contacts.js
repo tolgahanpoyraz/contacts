@@ -39,7 +39,7 @@ function displayContacts(contacts)
                 <span>${contact.firstName} ${contact.lastName}</span>
                 <span>${contact.email}</span>
                 <span>${contact.phone}</span>
-                <button class="buttons" onclick="doEditContact(${contact.id})">Edit</button>
+                <button class="buttons" onclick="doEditContact(${contact.id}, '${contact.firstName}', '${contact.lastName}', '${contact.email}', '${contact.phone}')">Edit</button>
                 <button class="buttons" onclick="doDeleteContact(${contact.id})">Delete</button>
             </div>`;
     }
@@ -100,31 +100,48 @@ async function doAddContact()
     }
 }
 
-async function doEditContact(contactId)
+let currentEditId = null;
+
+function doEditContact(contactId, firstName, lastName, email, phone)
 {
-    let firstName = prompt("Enter first name:");
-    let lastName = prompt("Enter last name:");
-    let email = prompt("Enter email:");
-    let phone = prompt("Enter phone:");
+    currentEditId = contactId;
+
+    document.getElementById("editFirstName").value = firstName;
+    document.getElementById("editLastName").value = lastName;
+    document.getElementById("editEmail").value = email;
+    document.getElementById("editPhone").value = phone;
+
+    document.getElementById("editContactDiv").style.display = "block";
+    document.getElementById("addContactDiv").style.display = "none";
+}
+
+async function doSaveContact()
+{
+    let firstName = document.getElementById("editFirstName").value;
+    let lastName = document.getElementById("editLastName").value;
+    let email = document.getElementById("editEmail").value;
+    let phone = document.getElementById("editPhone").value;
     let token = getToken();
     document.getElementById("contactsResult").innerHTML = "";
 
-    let patchData = {};
-    if (firstName) patchData.firstName = firstName;
-    if (lastName) patchData.lastName = lastName;
-    if (email) patchData.email = email;
-    if (phone) patchData.phone = phone;
-
-    if (Object.keys(patchData).length === 0)
+    if (firstName === "" || lastName === "" || email === "" || phone === "")
     {
-        document.getElementById("contactsResult").innerHTML = "No fields to update";
+        document.getElementById("contactsResult").innerHTML = "All fields are required";
+        return;
+    }
+
+    let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email))
+    {
+        document.getElementById("contactsResult").innerHTML = "Please enter a valid email address";
         return;
     }
 
     try
     {
-        await editContact(token, contactId, patchData);
+        await editContact(token, currentEditId, { firstName, lastName, email, phone });
         document.getElementById("contactsResult").innerHTML = "Contact has been updated";
+        cancelEdit();
         loadContacts();
     }
     catch(err)
@@ -132,6 +149,14 @@ async function doEditContact(contactId)
         document.getElementById("contactsResult").innerHTML = err.message;
     }
 }
+
+function cancelEdit()
+{
+    currentEditId = null;
+    document.getElementById("editContactDiv").style.display = "none";
+    document.getElementById("addContactDiv").style.display = "block";
+}
+
 
 async function doDeleteContact(contactId)
 {
