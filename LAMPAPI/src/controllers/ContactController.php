@@ -39,5 +39,49 @@ class ContactController extends Controller
         ]]);
     }
 
+    public function editContact($id): void
+    {
+        $userId = AuthMiddleware::verify();
+        $body = $this->readJson();
 
+        if (($body['email'] ?? null) && !filter_var($body['email'], FILTER_VALIDATE_EMAIL)) {
+            $this->json(400, ['error' => 'Invalid email format', 'fields' => ['email']]);
+            return;
+        }
+
+        $contact = $this->contactModel->findByContactId($id);
+        if ($contact === false || $contact['userId'] !== $userId) {
+            $this->json(404, ['error' => 'Contact not found.']);
+            return;
+        }
+
+        $firstName = $body['firstName'] ?? $contact['firstName'];
+        $lastName = $body['lastName'] ?? $contact['lastName'];
+        $phone = $body['phone'] ?? $contact['phone'];
+        $email = $body['email'] ?? $contact['email'];
+
+        $this->contactModel->updateContact($id, $firstName, $lastName, $phone, $email);
+        $this->json(200, ['contact' => [
+            'id' => $id,
+            'firstName' => $firstName,
+            'lastName' => $lastName,
+            'phone' => $phone,
+            'email' => $email,
+        ]]);
+    }
+
+    public function deleteContact(int $contactId): void
+    {
+        $userId = AuthMiddleware::verify();
+
+        $contact = $this->contactModel->findByContactId($contactId);
+
+        if ($contact === false || $contact['userId'] != $userId) {
+            $this->json(404, ['error' => 'Contact not found.']);
+            return;
+        }
+
+        $this->contactModel->deleteContact($contactId);
+        $this->json(204, []);
+    }
 }
