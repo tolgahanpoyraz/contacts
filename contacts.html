@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contacts</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #0f0f11;
+      --surface: #1a1a1f;
+      --accent:  #5b6af0;
+      --text:    #e8e8ed;
+      --muted:   #888;
+      --error:   #e05252;
+      --border:  #2e2e36;
+      --font:    'Georgia', serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      min-height: 100vh;
+    }
+
+    /* ── Nav ───────────────────────────────────────── */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-user { font-size: 0.95rem; color: var(--muted); }
+    .nav-user span { color: var(--text); }
+
+    .btn-logout {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: 6px;
+      padding: 0.4rem 1rem;
+      font-family: var(--font);
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .btn-logout:hover { color: var(--text); border-color: #555; }
+
+    /* ── Main Layout ───────────────────────────────── */
+    main { max-width: 860px; margin: 0 auto; padding: 2rem; }
+
+    /* ── Toolbar ───────────────────────────────────── */
+    .toolbar {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    #search-input {
+      flex: 1;
+      min-width: 200px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 0.95rem;
+      padding: 0.6rem 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    #search-input:focus { border-color: var(--accent); }
+
+    .btn-add {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 0.6rem 1.25rem;
+      font-family: var(--font);
+      font-size: 0.95rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: opacity 0.2s;
+    }
+    .btn-add:hover { opacity: 0.85; }
+
+    /* ── Contact Grid ──────────────────────────────── */
+    #contacts-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+
+    /* ── Contact Card ──────────────────────────────── */
+    .contact-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .contact-name  { font-size: 1.05rem; }
+    .contact-email,
+    .contact-phone { font-size: 0.85rem; color: var(--muted); }
+
+    .card-actions { display: flex; gap: 0.5rem; margin-top: 0.75rem; }
+
+    .btn-edit, .btn-delete {
+      flex: 1;
+      padding: 0.4rem;
+      border-radius: 5px;
+      font-family: var(--font);
+      font-size: 0.8rem;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      transition: opacity 0.2s;
+    }
+    .btn-edit   { background: transparent; color: var(--text); }
+    .btn-delete { background: transparent; color: var(--error); border-color: var(--error); }
+    .btn-edit:hover, .btn-delete:hover { opacity: 0.7; }
+
+    /* ── Empty State ───────────────────────────────── */
+    #empty-state {
+      display: none; /* shown by js/contacts.js when list is empty */
+      text-align: center;
+      color: var(--muted);
+      padding: 4rem 0;
+    }
+
+    /* ── Modal Overlay ─────────────────────────────── */
+    .modal-overlay {
+      display: none; /* toggled by js/contacts.js */
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 380px;
+    }
+
+    .modal h2 { margin-bottom: 1.25rem; font-size: 1.15rem; }
+
+    .modal-form { display: flex; flex-direction: column; gap: 0.9rem; }
+
+    .modal-form label  { font-size: 0.8rem; color: var(--muted); display: block; margin-bottom: 0.25rem; }
+    .modal-form input  {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 0.9rem;
+      padding: 0.6rem 0.8rem;
+      outline: none;
+    }
+    .modal-form input:focus { border-color: var(--accent); }
+
+    .modal-actions { display: flex; gap: 0.75rem; margin-top: 0.5rem; }
+
+    .btn-cancel {
+      flex: 1;
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: 6px;
+      padding: 0.65rem;
+      font-family: var(--font);
+      cursor: pointer;
+    }
+    .btn-save {
+      flex: 2;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 0.65rem;
+      font-family: var(--font);
+      cursor: pointer;
+    }
+
+    .modal-error { color: var(--error); font-size: 0.8rem; min-height: 1em; }
+  </style>
+</head>
+<body>
+
+  <!-- ── Navigation ─────────────────────────────────── -->
+  <nav>
+    <p class="nav-user">Hello, <span id="user-name">...</span></p>
+    <button class="btn-logout" onclick="handleLogout()">Logout</button>
+  </nav>
+
+  <!-- ── Main Content ───────────────────────────────── -->
+  <main>
+    <div class="toolbar">
+      <input
+        type="text"
+        id="search-input"
+        placeholder="Search by name or email…"
+        oninput="onSearch(this.value)"
+      />
+      <button class="btn-add" onclick="openModal()">+ Add Contact</button>
+    </div>
+
+    <!-- Contact cards render here -->
+    <div id="contacts-list"></div>
+
+    <!-- Shown when no contacts exist -->
+    <div id="empty-state">
+      <p>No contacts yet. Add your first one!</p>
+    </div>
+  </main>
+
+  <!-- ── Add / Edit Modal ───────────────────────────── -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+      <h2 id="modal-title">Add Contact</h2>
+      <div class="modal-form">
+        <input type="hidden" id="modal-contact-id" value="" />
+        <div>
+          <label>First Name</label>
+          <input type="text" id="modal-firstname" placeholder="John" />
+        </div>
+        <div>
+          <label>Last Name</label>
+          <input type="text" id="modal-lastname" placeholder="Doe" />
+        </div>
+        <div>
+          <label>Email</label>
+          <input type="email" id="modal-email" placeholder="john@example.com" />
+        </div>
+        <div>
+          <label>Phone</label>
+          <input type="tel" id="modal-phone" placeholder="555-0142" />
+        </div>
+        <p class="modal-error" id="modal-error"></p>
+        <div class="modal-actions">
+          <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+          <button class="btn-save"   onclick="onSaveContact()">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Load order matters: api → auth → contacts -->
+  <script src="js/api.js"></script>
+  <script src="auth.js"></script>
+  <script src="js/contacts.js"></script>
+
+  <script>
+    // ── Boot ───────────────────────────────────────────
+    // Redirect to login if no token
+    checkAuth();
+
+    // Show logged-in user's name
+    document.getElementById('user-name').textContent =
+      localStorage.getItem('firstName') || 'there';
+
+    // Load contacts on page open
+    loadContacts();
+
+    // ── Search (debounced) ─────────────────────────────
+    let searchTimer;
+    function onSearch(value) {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => loadContacts(value.trim()), 300);
+    }
+
+    // ── Modal helpers ──────────────────────────────────
+    function openModal(contact = null) {
+      document.getElementById('modal-error').textContent = '';
+      document.getElementById('modal-title').textContent = contact ? 'Edit Contact' : 'Add Contact';
+      document.getElementById('modal-contact-id').value  = contact ? contact.id : '';
+      document.getElementById('modal-firstname').value   = contact ? contact.firstName : '';
+      document.getElementById('modal-lastname').value    = contact ? contact.lastName  : '';
+      document.getElementById('modal-email').value       = contact ? contact.email     : '';
+      document.getElementById('modal-phone').value       = contact ? contact.phone     : '';
+      document.getElementById('modal-overlay').classList.add('open');
+    }
+
+    function closeModal() {
+      document.getElementById('modal-overlay').classList.remove('open');
+    }
+
+    async function onSaveContact() {
+      const id        = document.getElementById('modal-contact-id').value;
+      const firstName = document.getElementById('modal-firstname').value.trim();
+      const lastName  = document.getElementById('modal-lastname').value.trim();
+      const email     = document.getElementById('modal-email').value.trim();
+      const phone     = document.getElementById('modal-phone').value.trim();
+
+      document.getElementById('modal-error').textContent = '';
+
+      try {
+        if (id) {
+          await handleEditContact(id, { firstName, lastName, email, phone });
+        } else {
+          await handleAddContact({ firstName, lastName, email, phone });
+        }
+        closeModal();
+        loadContacts();
+      } catch (err) {
+        document.getElementById('modal-error').textContent = err.message;
+      }
+    }
+  </script>
+
+</body>
+</html>

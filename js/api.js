@@ -1,5 +1,7 @@
-const urlBase = 'http://COP4331-9.com/api';
-const extension = 'php';
+// const urlBase = 'http://COP4331-9.com/api';
+// const extension = 'php';
+
+const urlBase = 'http://localhost:8000';
 
 async function loginUser(username, password) {
   let response;
@@ -16,6 +18,7 @@ async function loginUser(username, password) {
   if (!response.ok) {
     throw new Error(data.error || 'Login failed');
   }
+  
 
   return data;
 
@@ -121,7 +124,7 @@ async function deleteContact(token, contactId) {
   });
 
   if (!response.ok) {
-    data = await response.json().catch(() => ({}));
+    const data = await response.json().catch(() => ({}));
     throw new Error(data.error || 'Failed to delete contact');
   }
 }
