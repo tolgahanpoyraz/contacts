@@ -2,11 +2,11 @@ async function doLogin()
 {
     let username = document.getElementById("loginName").value;
     let password = document.getElementById("loginPassword").value;
-    document.getElementById("loginResult").innerHTML = "";
+    document.getElementById("error-msg").innerHTML = "";
 
     if (username === "" || password === "")
     {
-        document.getElementById("loginResult").innerHTML = "Please enter a username and password";
+        document.getElementById("error-msg").innerHTML = "Please enter a username and password";
         return;
     }
 
@@ -18,7 +18,7 @@ async function doLogin()
     }
     catch(err)
     {
-        document.getElementById("loginResult").innerHTML = err.message;
+        document.getElementById("error-msg").innerHTML = err.message;
     }
 }
 
@@ -28,13 +28,19 @@ async function doRegister()
     let firstName = document.getElementById("registerFirstName").value;
     let lastName = document.getElementById("registerLastName").value;
     let password = document.getElementById("registerPassword").value;
-    document.getElementById("registerResult").innerHTML = "";
+    document.getElementById("error-msg").innerHTML = "";
 
     if (username === "" || firstName === "" || lastName === "" || password === "")
     {
-        document.getElementById("registerResult").innerHTML = "All fields are required";
+        document.getElementById("error-msg").innerHTML = "All fields are required";
         return;
     }
+
+    if (username === "" || firstName === "" || lastName === "" || password === "")
+    {
+        document.getElementById("error-msg").innerHTML = "All fields are required";
+        return;
+    }    
 
     try
     {
@@ -44,6 +50,6 @@ async function doRegister()
     }
     catch(err)
     {
-        document.getElementById("registerResult").innerHTML = err.message;
+        document.getElementById("error-msg").innerHTML = err.message;
     }
 }
