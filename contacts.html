@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Personal Contacts Manager</title>
+    <link href="css/styles.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/contacts.js"></script>
+</head>
+<body>
+
+    <h1 id="title">Personal Contacts Manager</h1>
+
+    <div id="loggedInDiv">
+        <span id="userName"></span><br />
+        <button type="button" class="buttons" onclick="doLogout()">Log Out</button>
+    </div>
+
+    <div id="searchDiv">
+        <input type="text" id="searchText" placeholder="Search by name or email"/>
+        <button type="button" class="buttons" onclick="doSearchContacts()">Search</button>
+    </div>
+
+    <div id="contactList">
+    </div>
+
+    <span id="contactsResult"></span>
+
+    <div id="editContactDiv" style="display:none;">
+      <h2>Edit Contact</h2>
+      <input type="text" id="editFirstName" placeholder="First Name"/><br />
+      <input type="text" id="editLastName" placeholder="Last Name"/><br />
+      <input type="text" id="editEmail" placeholder="Email"/><br />
+      <input type="text" id="editPhone" placeholder="Phone Number"/><br />
+      <button type="button" class="buttons" onclick="doSaveContact()">Save</button>
+      <button type="button" class="buttons" onclick="cancelEdit()">Cancel</button>
+    </div>
+
+    <div id="addContactDiv">
+        <h2>Add Contact</h2>
+        <input type="text" id="contactFirstName" placeholder="First Name"/><br />
+        <input type="text" id="contactLastName" placeholder="Last Name"/><br />
+        <input type="text" id="contactEmail" placeholder="Email"/><br />
+        <input type="text" id="contactPhone" placeholder="Phone Number"/><br />
+        <button type="button" class="buttons" onclick="doAddContact()">Add Contact</button>
+    </div>
+
+</body>
+</html>
