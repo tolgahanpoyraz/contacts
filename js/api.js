@@ -40,28 +40,25 @@ async function registerUser(username, password, firstName, lastName) {
   return data;
 }
 
-async function getContacts(token, query = '') {
-  let url;
-  let response;
-  let data;
+async function getContacts(token, query = '', page = 1, limit = 10) {
+    const params = new URLSearchParams();
+    if (query) params.set('q', query);
+    params.set('page', page);
+    params.set('limit', limit);
 
-  url = query ? `${urlBase}/contacts?q=${encodeURIComponent(query)}` : `${urlBase}/contacts`;
-
-  response = await fetch(url, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    },
-  });
-
-  data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.error || 'Failed to fetch contacts');
-  }
-
-  return data;
+    const url = `${urlBase}/contacts?${params}`;
+    const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        },
+    });
+    const data = await response.json();
+    if (!response.ok) {
+        throw new Error(data.error || 'Failed to fetch contacts');
+    }
+    return data;
 }
 
 
