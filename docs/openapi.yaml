@@ -153,6 +153,7 @@ paths:
                   lastName: "Doe"
                   email: "janedoe@mail.com"
                   phone: "555-0198"
+              total: 2
         401:
           description: Unauthorized — missing or invalid JWT
           schema:
