@@ -1,4 +1,4 @@
-const urlBase = 'http://COP4331-9.com/api';
+const urlBase = 'https://COP4331-9.com/api';
 const extension = 'php';
 
 async function loginUser(username, password) {
