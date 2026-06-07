@@ -11,8 +11,15 @@ class ContactController extends Controller
     public function getContacts(): void
     {
         $userId = AuthMiddleware::verify();
-        $contacts = $this->contactModel->findByUserId($userId, $_GET['q'] ?? null);
-        $this->json(200, ['contacts' => $contacts]);
+
+        $page = max(1, intval($_GET['page'] ?? 1));
+        $limit = max(1, intval($_GET['limit'] ?? 10));
+        $offset = ($page - 1) * $limit;
+        
+        $contacts = $this->contactModel->findByUserId($userId, $_GET['q'] ?? null, $limit, $offset);
+        $total    = $this->contactModel->countByUserId($userId, $_GET['q'] ?? null);
+        
+        $this->json(200, ['contacts' => $contacts, 'total' => $total]);
     }
 
     public function addContact(): void

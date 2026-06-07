@@ -123,6 +123,18 @@ paths:
           type: string
           required: false
           description: Partial match search string (matches against first name, last name, or email)
+        - in: query
+          name: page
+          type: integer
+          required: false
+          default: 1
+          description: Page number to retrieve (1-based)
+        - in: query
+          name: limit
+          type: integer
+          required: false
+          default: 10
+          description: Number of contacts to return per page
       responses:
         200:
           description: Contacts retrieved successfully
@@ -141,6 +153,7 @@ paths:
                   lastName: "Doe"
                   email: "janedoe@mail.com"
                   phone: "555-0198"
+              total: 2
         401:
           description: Unauthorized — missing or invalid JWT
           schema:
@@ -424,6 +437,10 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/Contact"
+      total:
+        type: integer
+        description: Total number of matching contacts across all pages
+        example: 26
 
   ErrorResponse:
     type: object
