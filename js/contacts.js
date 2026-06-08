@@ -5,6 +5,7 @@ let currentPage   = 1;
 let currentQuery  = '';
 let totalContacts = 0;
 let currentEditId = null;
+let searchDebounceTimer = null;
 
 // ── Bootstrap ──────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function ()
@@ -22,6 +23,12 @@ async function doSearchContacts()
     currentQuery = document.getElementById('searchText').value;
     currentPage  = 1;
     await fetchAndDisplay();
+}
+
+function onSearchInput()
+{
+    clearTimeout(searchDebounceTimer);
+    searchDebounceTimer = setTimeout(doSearchContacts, 300);
 }
 
 // ── Core fetch + render ────────────────────────────────────────────────────────
