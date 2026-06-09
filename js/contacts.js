@@ -1,10 +1,10 @@
 const PAGE_SIZE = 10;
 const MAX_PAGE_BUTTONS = 7;
 
-let currentPage   = 1;
-let currentQuery  = '';
-let totalContacts = 0;
-let currentEditId = null;
+let currentPage         = 1;
+let currentQuery        = '';
+let totalContacts       = 0;
+let currentEditId       = null;
 let searchDebounceTimer = null;
 
 // ── Bootstrap ──────────────────────────────────────────────────────────────────
@@ -103,7 +103,7 @@ function buildPaginationHTML(page, total)
     // ← Previous
     if (page <= 1)
     {
-        html += `<li><span class="disabled">← Previous</span></li>`;
+        html += `<li><span class="disabled" aria-disabled="true">← Previous</span></li>`;
     }
     else
     {
@@ -116,7 +116,7 @@ function buildPaginationHTML(page, total)
     {
         if (p - prev > 1)
         {
-            html += `<li><span class="gap">…</span></li>`;
+            html += `<li><span class="gap" aria-hidden="true">…</span></li>`;
         }
 
         if (p === page)
@@ -134,7 +134,7 @@ function buildPaginationHTML(page, total)
     // Next →
     if (page >= total)
     {
-        html += `<li><span class="disabled">Next →</span></li>`;
+        html += `<li><span class="disabled" aria-disabled="true">Next →</span></li>`;
     }
     else
     {
@@ -187,34 +187,34 @@ async function doAddContact()
     const email     = document.getElementById('contactEmail').value;
     const phone     = document.getElementById('contactPhone').value;
     const token     = getToken();
-    document.getElementById('contactsResult').innerHTML = '';
+    const resultEl  = document.getElementById('addContactResult');
+    resultEl.innerHTML = '';
 
     if (!firstName || !lastName || !email || !phone)
     {
-        document.getElementById('contactsResult').innerHTML = 'All fields are required';
+        resultEl.innerHTML = 'All fields are required';
         return;
     }
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
     {
-        document.getElementById('contactsResult').innerHTML = 'Please enter a valid email address';
+        resultEl.innerHTML = 'Please enter a valid email address';
         return;
     }
 
     try
     {
         await addContact(token, { firstName, lastName, email, phone });
-        document.getElementById('contactsResult').innerHTML = 'Contact has been added';
+        resultEl.innerHTML = 'Contact has been added';
         document.getElementById('contactFirstName').value = '';
         document.getElementById('contactLastName').value  = '';
         document.getElementById('contactEmail').value     = '';
         document.getElementById('contactPhone').value     = '';
-        // Re-run the current search so the list reflects the change
         await fetchAndDisplay();
     }
     catch (err)
     {
-        document.getElementById('contactsResult').innerHTML = err.message;
+        resultEl.innerHTML = err.message;
     }
 }
 
@@ -226,6 +226,7 @@ function doEditContact(contactId, firstName, lastName, email, phone)
     document.getElementById('editLastName').value  = lastName;
     document.getElementById('editEmail').value     = email;
     document.getElementById('editPhone').value     = phone;
+    document.getElementById('editContactResult').innerHTML = '';
     document.getElementById('editContactDiv').style.display = 'block';
     document.getElementById('addContactDiv').style.display  = 'none';
 }
@@ -237,30 +238,31 @@ async function doSaveContact()
     const email     = document.getElementById('editEmail').value;
     const phone     = document.getElementById('editPhone').value;
     const token     = getToken();
-    document.getElementById('contactsResult').innerHTML = '';
+    const resultEl  = document.getElementById('editContactResult');
+    resultEl.innerHTML = '';
 
     if (!firstName || !lastName || !email || !phone)
     {
-        document.getElementById('contactsResult').innerHTML = 'All fields are required';
+        resultEl.innerHTML = 'All fields are required';
         return;
     }
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
     {
-        document.getElementById('contactsResult').innerHTML = 'Please enter a valid email address';
+        resultEl.innerHTML = 'Please enter a valid email address';
         return;
     }
 
     try
     {
         await editContact(token, currentEditId, { firstName, lastName, email, phone });
-        document.getElementById('contactsResult').innerHTML = 'Contact has been updated';
+        resultEl.innerHTML = 'Contact has been updated';
         cancelEdit();
         await fetchAndDisplay();
     }
     catch (err)
     {
-        document.getElementById('contactsResult').innerHTML = err.message;
+        resultEl.innerHTML = err.message;
     }
 }
 
@@ -295,18 +297,27 @@ async function doDeleteContact(contactId)
     }
 }
 
-function formatPhone(input) {
-  // Strip everything except digits
-  let digits = input.value.replace(/\D/g, '').slice(0, 10);
+// ── Phone formatting ───────────────────────────────────────────────────────────
+function formatPhone(input)
+{
+    // Strip everything except digits
+    let digits = input.value.replace(/\D/g, '').slice(0, 10);
 
-  // Auto-format as user types
-  if (digits.length === 0) {
-    input.value = '';
-  } else if (digits.length <= 3) {
-    input.value = `(${digits}`;
-  } else if (digits.length <= 6) {
-    input.value = `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
-  } else {
-    input.value = `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
-  }
+    // Auto-format as user types
+    if (digits.length === 0)
+    {
+        input.value = '';
+    }
+    else if (digits.length <= 3)
+    {
+        input.value = `(${digits}`;
+    }
+    else if (digits.length <= 6)
+    {
+        input.value = `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+    }
+    else
+    {
+        input.value = `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+    }
 }
