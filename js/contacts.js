@@ -82,9 +82,9 @@ function renderPagination()
     const html = buildPaginationHTML(currentPage, totalPages);
     ids.forEach(id =>
     {
-        const el = document.getElementById(id);
-        el.style.display = 'flex';
-        el.innerHTML = html;
+        const nav = document.getElementById(id);
+        nav.style.display = 'block';
+        nav.querySelector('ol').innerHTML = html;
     });
 }
 
