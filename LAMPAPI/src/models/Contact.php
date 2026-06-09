@@ -12,7 +12,7 @@ class Contact
         $sql = 'SELECT ID as id, FirstName as firstName, LastName as lastName, Phone as phone, Email as email ' .
                'FROM Contacts WHERE UserID = :userId';
         if ($search !== null && $search !== '') {
-            $sql .= ' AND (FirstName LIKE :search OR LastName LIKE :search OR Email LIKE :search)';
+            $sql .= ' AND (FirstName LIKE :search OR LastName LIKE :search OR Email LIKE :search OR Phone LIKE :search OR CONCAT(FirstName, \' \', LastName) LIKE :search)';
         }
         $sql .= ' ORDER BY FirstName ASC, LastName ASC';
         $sql .= ' LIMIT :limit OFFSET :offset';
@@ -33,7 +33,7 @@ class Contact
         $sql = 'SELECT COUNT(*) FROM Contacts WHERE UserID = :userId';
         $params = [':userId' => $userId];
         if ($search !== null && $search !== '') {
-            $sql .= ' AND (FirstName LIKE :search OR LastName LIKE :search OR Email LIKE :search)';
+            $sql .= ' AND (FirstName LIKE :search OR LastName LIKE :search OR Email LIKE :search OR Phone LIKE :search OR CONCAT(FirstName, \' \', LastName) LIKE :search)';
             $params[':search'] = '%' . $search . '%';
         }
         $stmt = $this->pdo->prepare($sql);
