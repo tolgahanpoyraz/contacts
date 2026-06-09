@@ -5,7 +5,6 @@ let currentPage   = 1;
 let currentQuery  = '';
 let totalContacts = 0;
 let currentEditId = null;
-let searchDebounceTimer = null;
 
 // ── Bootstrap ──────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function ()
@@ -23,12 +22,6 @@ async function doSearchContacts()
     currentQuery = document.getElementById('searchText').value;
     currentPage  = 1;
     await fetchAndDisplay();
-}
-
-function onSearchInput()
-{
-    clearTimeout(searchDebounceTimer);
-    searchDebounceTimer = setTimeout(doSearchContacts, 300);
 }
 
 // ── Core fetch + render ────────────────────────────────────────────────────────
@@ -187,24 +180,24 @@ async function doAddContact()
     const email     = document.getElementById('contactEmail').value;
     const phone     = document.getElementById('contactPhone').value;
     const token     = getToken();
-    document.getElementById('contactsResult').innerHTML = '';
+    document.getElementById('addContactsResult').innerHTML = '';
 
     if (!firstName || !lastName || !email || !phone)
     {
-        document.getElementById('contactsResult').innerHTML = 'All fields are required';
+        document.getElementById('addContactsResult').innerHTML = 'All fields are required';
         return;
     }
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
     {
-        document.getElementById('contactsResult').innerHTML = 'Please enter a valid email address';
+        document.getElementById('addContactsResult').innerHTML = 'Please enter a valid email address';
         return;
     }
 
     try
     {
         await addContact(token, { firstName, lastName, email, phone });
-        document.getElementById('contactsResult').innerHTML = 'Contact has been added';
+        document.getElementById('addContactsResult').innerHTML = 'Contact has been added';
         document.getElementById('contactFirstName').value = '';
         document.getElementById('contactLastName').value  = '';
         document.getElementById('contactEmail').value     = '';
@@ -214,7 +207,7 @@ async function doAddContact()
     }
     catch (err)
     {
-        document.getElementById('contactsResult').innerHTML = err.message;
+        document.getElementById('addContactsResult').innerHTML = err.message;
     }
 }
 
@@ -237,30 +230,30 @@ async function doSaveContact()
     const email     = document.getElementById('editEmail').value;
     const phone     = document.getElementById('editPhone').value;
     const token     = getToken();
-    document.getElementById('contactsResult').innerHTML = '';
+    document.getElementById('editContactsResult').innerHTML = '';
 
     if (!firstName || !lastName || !email || !phone)
     {
-        document.getElementById('contactsResult').innerHTML = 'All fields are required';
+        document.getElementById('editContactsResult').innerHTML = 'All fields are required';
         return;
     }
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
     {
-        document.getElementById('contactsResult').innerHTML = 'Please enter a valid email address';
+        document.getElementById('editContactsResult').innerHTML = 'Please enter a valid email address';
         return;
     }
 
     try
     {
         await editContact(token, currentEditId, { firstName, lastName, email, phone });
-        document.getElementById('contactsResult').innerHTML = 'Contact has been updated';
+        document.getElementById('editContactsResult').innerHTML = 'Contact has been updated';
         cancelEdit();
         await fetchAndDisplay();
     }
     catch (err)
     {
-        document.getElementById('contactsResult').innerHTML = err.message;
+        document.getElementById('editContactsResult').innerHTML = err.message;
     }
 }
 
