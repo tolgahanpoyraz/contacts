@@ -21,38 +21,26 @@
     }
 
     body {
-      background: 
-        linear-gradient(
-          145deg,
-          #064789 20%,
-          #ebf2fa 80%
-        );
+      background: linear-gradient(145deg, #064789 20%, #ebf2fa 80%);
       color: var(--text);
       font-family: var(--font);
       min-height: 100vh;
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      flex-direction: column;  /* nav on top, content below */
     }
 
     nav {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0.45rem 3rem;
+      padding: 1.5rem 3rem;
       border-bottom: 1px solid #8babf1;
-      position: sticky;
-      top: 0;
-      z-index: 100;
       width: 100%;
     }
 
     .logo { 
       font-size: 1.25rem; 
       letter-spacing: 0.05em; 
-      position: relative;
-      top: -22.5px;
     }
     
     .card{
@@ -153,51 +141,50 @@
     <span class="logo">Contacts</span>
   </nav>
 
-  <main>
-    
+  <main style="flex: 1; display: flex; align-items: center; justify-content: center;">
+    <div class="card">
+      <h1 class="card-title">Welcome back!</h1>
+ 
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab('login')">Login</button>
+        <button class="tab"        onclick="switchTab('register')">Register</button>
+      </div>
+ 
+      <p class="error-msg" id="error-msg"></p>
+ 
+      <div class="form active" id="form-login">
+        <div>
+          <label for="loginName">Username<span style="color: red;">*</span></label>
+          <input type="text" class="form-control username-placeholder" id="loginName" placeholder="username"/>
+        </div>
+        <div>
+          <label for="loginPassword">Password<span style="color: red;">*</span></label>
+          <input type="password" id="loginPassword" placeholder="••••••••" />
+        </div>
+        <button class="btn-submit" onclick="onLogin()">Login</button>
+      </div>
+ 
+      <div class="form" id="form-register">
+        <div>
+          <label for="registerFirstName">First Name<span style="color: red;">*</span></label>
+          <input type="text" id="registerFirstName" placeholder="John" />
+        </div>
+        <div>
+          <label for="registerLastName">Last Name<span style="color: red;">*</span></label>
+          <input type="text" id="registerLastName" placeholder="Doe" />
+        </div>
+        <div>
+          <label for="registerUsername">Username<span style="color: red;">*</span></label>
+          <input type="text" class="form-control username-placeholder" id="registerUsername" placeholder="username"/>
+        </div>
+        <div>
+          <label for="registerPassword">Password<span style="color: red;">*</span></label>
+          <input type="password" id="registerPassword" placeholder="••••••••" />
+        </div>
+        <button class="btn-submit" onclick="onRegister()">Create Account</button>
+      </div>
+    </div>
   </main>
-  <div class="card">
-    <h1 class="card-title">Welcome back!</h1>
- 
-    <div class="tabs">
-      <button class="tab active" onclick="switchTab('login')">Login</button>
-      <button class="tab"        onclick="switchTab('register')">Register</button>
-    </div>
- 
-    <p class="error-msg" id="error-msg"></p>
- 
-    <div class="form active" id="form-login">
-      <div>
-        <label for="loginName">Username<span style="color: red;">*</span></label>
-        <input type="text" class="form-control username-placeholder" id="loginName" placeholder="username"/>
-      </div>
-      <div>
-        <label for="loginPassword">Password<span style="color: red;">*</span></label>
-        <input type="password" id="loginPassword" placeholder="••••••••" />
-      </div>
-      <button class="btn-submit" onclick="onLogin()">Login</button>
-    </div>
- 
-    <div class="form" id="form-register">
-      <div>
-        <label for="registerFirstName">First Name<span style="color: red;">*</span></label>
-        <input type="text" id="registerFirstName" placeholder="John" />
-      </div>
-      <div>
-        <label for="registerLastName">Last Name<span style="color: red;">*</span></label>
-        <input type="text" id="registerLastName" placeholder="Doe" />
-      </div>
-      <div>
-        <label for="registerUsername">Username<span style="color: red;">*</span></label>
-        <input type="text" class="form-control username-placeholder" id="registerUsername" placeholder="username"/>
-      </div>
-      <div>
-        <label for="registerPassword">Password<span style="color: red;">*</span></label>
-        <input type="password" id="registerPassword" placeholder="••••••••" />
-      </div>
-      <button class="btn-submit" onclick="onRegister()">Create Account</button>
-    </div>
-  </div>
 
   <script src="js/api.js"></script>
   <script src="js/auth.js"></script>
