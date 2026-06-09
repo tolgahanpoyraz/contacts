@@ -254,7 +254,7 @@
 
         <!-- Search -->
         <div id="searchDiv">
-            <input type="text" id="searchText" placeholder="Search by name, email, or phone…" oninput="onSearchInput()" />
+            <input type="text" id="searchText" placeholder="Search by name or email…" oninput="onSearchInput()" />
             <button type="button" class="buttons primary" onclick="doSearchContacts()">Search</button>
         </div>
 
@@ -300,6 +300,7 @@
                 <div class="panel-actions">
                     <button type="button" class="buttons primary" onclick="doSaveContact()">Save Changes</button>
                     <button type="button" class="buttons" onclick="cancelEdit()">Cancel</button>
+                    <span id="editContactResult" style="font-size:0.85rem; color:var(--muted); font-style:italic;"></span>
                 </div>
             </div>
             <hr class="section-divider" />
@@ -334,6 +335,7 @@
                 </div>
                 <div class="panel-actions">
                     <button type="button" class="buttons primary" onclick="doAddContact()">Add Contact</button>
+                    <span id="addContactResult" style="font-size:0.85rem; color:var(--muted); font-style:italic;"></span>
                 </div>
             </div>
         </div>
