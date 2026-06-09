@@ -176,9 +176,11 @@
             cursor: default;
         }
         .pagination li span.disabled {
-            opacity: 0.35;
-            cursor: default;
-            border-color: var(--border);
+            color: #7a9cbf;
+            border-color: #3a6a9a;
+            cursor: not-allowed;
+            background: transparent;
+            font-style: italic;
         }
         .pagination li span.gap {
             border-color: transparent;
@@ -259,15 +261,19 @@
         </div>
 
         <!-- Top pagination -->
-        <ol class="pagination" id="paginationTop" role="navigation" aria-label="Pagination" style="display:none;"></ol>
-
+        <nav id="paginationTop" aria-label="Contact list pagination, top" style="display:none;">
+            <ol class="pagination"></ol>
+        </nav>
+            
         <!-- Contact List -->
         <div id="contactList"></div>
         <span id="contactsResult"></span>
 
         <!-- Bottom pagination -->
-        <ol class="pagination" id="paginationBottom" role="navigation" aria-label="Pagination" style="display:none;"></ol>
-
+        <nav id="paginationBottom" aria-label="Contact list pagination, bottom" style="display:none;">
+            <ol class="pagination"></ol>
+        </nav>
+            
         <hr class="section-divider" />
 
         <!-- Edit Contact -->
