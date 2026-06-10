@@ -3,7 +3,7 @@ erDiagram
         int ID PK "auto_increment"
         varchar FirstName "NOT NULL, max 50"
         varchar LastName "NOT NULL, max 50"
-        varchar Login "NOT NULL, max 50"
+        varchar Login "NOT NULL, max 50, UNIQUE"
         varchar Password "NOT NULL, max 255"
     }
 
