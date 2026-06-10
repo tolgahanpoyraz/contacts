@@ -3,8 +3,8 @@ info:
   title: Personal Contacts Manager API
   description: A RESTful API for managing contacts with JWT-based authentication.
   version: "1.0.0"
-host: "localhost:8000"
-basePath: "/"
+host: "cop4331-9.com"
+basePath: "/api"
 schemes:
   - https
 consumes:
