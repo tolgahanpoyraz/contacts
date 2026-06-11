@@ -302,25 +302,29 @@
                 <h2>Edit <span>Contact</span></h2>
                 <p class="panel-subtitle">Update details below</p>
                 <div class="field-row">
-                    <div class="field-wrap">
-                        <label class="field-label">First Name</label>
-                        <input type="text" id="editFirstName" placeholder="First Name" />
+                    <div class="field-wrap" id="wrap-editFirstName">
+                        <label class="field-label" for="editFirstName">First Name</label>
+                        <input type="text" id="editFirstName" placeholder="First Name" aria-required="true" />
+                        <span class="field-error-msg" aria-live="polite">First name is required</span>
                     </div>
-                    <div class="field-wrap">
-                        <label class="field-label">Last Name</label>
-                        <input type="text" id="editLastName" placeholder="Last Name" />
-                    </div>
-                </div>
-                <div class="field-row single">
-                    <div class="field-wrap">
-                        <label class="field-label">Email</label>
-                        <input type="text" id="editEmail" placeholder="Email" />
+                    <div class="field-wrap" id="wrap-editLastName">
+                        <label class="field-label" for="editLastName">Last Name</label>
+                        <input type="text" id="editLastName" placeholder="Last Name" aria-required="true" />
+                        <span class="field-error-msg" aria-live="polite">Last name is required</span>
                     </div>
                 </div>
                 <div class="field-row single">
-                    <div class="field-wrap">
-                        <label class="field-label">Phone Number</label>
-                        <input type="text" id="editPhone" placeholder="(555) 555-5555" maxlength="14" oninput="formatPhone(this)" />
+                    <div class="field-wrap" id="wrap-editEmail">
+                        <label class="field-label" for="editEmail">Email</label>
+                        <input type="text" id="editEmail" placeholder="Email" aria-required="true" />
+                        <span class="field-error-msg" aria-live="polite">A valid email address is required</span>
+                    </div>
+                </div>
+                <div class="field-row single">
+                    <div class="field-wrap" id="wrap-editPhone">
+                        <label class="field-label" for="editPhone">Phone Number</label>
+                        <input type="text" id="editPhone" placeholder="(555) 555-5555" maxlength="14" oninput="formatPhone(this)" aria-required="true" />
+                        <span class="field-error-msg" aria-live="polite">Phone number is required</span>
                     </div>
                 </div>
                 <div class="panel-actions">
@@ -338,25 +342,29 @@
                 <h2>Add <span>Contact</span></h2>
                 <p class="panel-subtitle">New entry</p>
                 <div class="field-row">
-                    <div class="field-wrap">
-                        <label class="field-label">First Name</label>
-                        <input type="text" id="contactFirstName" placeholder="First Name" />
+                    <div class="field-wrap" id="wrap-contactFirstName">
+                        <label class="field-label" for="contactFirstName">First Name</label>
+                        <input type="text" id="contactFirstName" placeholder="First Name" aria-required="true" />
+                        <span class="field-error-msg" aria-live="polite">First name is required</span>
                     </div>
-                    <div class="field-wrap">
-                        <label class="field-label">Last Name</label>
-                        <input type="text" id="contactLastName" placeholder="Last Name" />
-                    </div>
-                </div>
-                <div class="field-row single">
-                    <div class="field-wrap">
-                        <label class="field-label">Email</label>
-                        <input type="text" id="contactEmail" placeholder="Email" />
+                    <div class="field-wrap" id="wrap-contactLastName">
+                        <label class="field-label" for="contactLastName">Last Name</label>
+                        <input type="text" id="contactLastName" placeholder="Last Name" aria-required="true" />
+                        <span class="field-error-msg" aria-live="polite">Last name is required</span>
                     </div>
                 </div>
                 <div class="field-row single">
-                    <div class="field-wrap">
-                        <label class="field-label">Phone Number</label>
-                        <input type="text" id="contactPhone" placeholder="(555) 555-5555" maxlength="14" oninput="formatPhone(this)" />
+                    <div class="field-wrap" id="wrap-contactEmail">
+                        <label class="field-label" for="contactEmail">Email</label>
+                        <input type="text" id="contactEmail" placeholder="Email" aria-required="true" />
+                        <span class="field-error-msg" aria-live="polite">A valid email address is required</span>
+                    </div>
+                </div>
+                <div class="field-row single">
+                    <div class="field-wrap" id="wrap-contactPhone">
+                        <label class="field-label" for="contactPhone">Phone Number</label>
+                        <input type="text" id="contactPhone" placeholder="(555) 555-5555" maxlength="14" oninput="formatPhone(this)" aria-required="true" />
+                        <span class="field-error-msg" aria-live="polite">Phone number is required</span>
                     </div>
                 </div>
                 <div class="panel-actions">
