@@ -223,6 +223,25 @@
             display: flex; align-items: center; gap: 0.75rem; margin-top: 1.5rem;
             padding-top: 1.2rem; border-top: 1px solid var(--border);
         }
+
+        /* ── Field error state ── */
+        .field-wrap.error .field-label {
+            color: #ffb347;
+        }
+        .field-wrap.error input[type="text"] {
+            border-color: #ffb347;
+            background: rgba(255, 179, 71, 0.1);
+        }
+        .field-wrap.error .field-error-msg {
+            display: block;
+        }
+        .field-error-msg {
+            display: none;
+            font-size: 0.72rem;
+            color: #ffb347;
+            margin-top: 0.25rem;
+            font-style: italic;
+        }
         #editContactDiv { margin-bottom: 0; }
 
         /* ── Animations ── */
@@ -250,106 +269,104 @@
         </div>
     </nav>
 
-    <main>
-        <div class="app-shell">
+    <div class="app-shell">
 
-            <h1 id="title">Your <span>contacts.</span></h1>
-            <p class="page-subtitle">Add, search, and manage everyone that matters.</p>
+        <h1 id="title">Your <span>contacts.</span></h1>
+        <p class="page-subtitle">Add, search, and manage everyone that matters.</p>
 
-            <!-- Search -->
-            <div id="searchDiv">
-                <input type="text" id="searchText" placeholder="Search by name, email, or phone…" oninput="onSearchInput()" />
-                <button type="button" class="buttons primary" onclick="doSearchContacts()">Search</button>
-            </div>
+        <!-- Search -->
+        <div id="searchDiv">
+            <input type="text" id="searchText" placeholder="Search by name, email, or phone…" oninput="onSearchInput()" />
+            <button type="button" class="buttons primary" onclick="doSearchContacts()">Search</button>
+        </div>
 
-            <!-- Top pagination -->
-            <nav id="paginationTop" aria-label="Contact list pagination, top" style="display:none;">
-                <ol class="pagination"></ol>
-            </nav>
+        <!-- Top pagination -->
+        <nav id="paginationTop" aria-label="Contact list pagination, top" style="display:none;">
+            <ol class="pagination"></ol>
+        </nav>
 
-            <!-- Contact List -->
-            <div id="contactList"></div>
-            <span id="contactsResult"></span>
+        <!-- Contact List -->
+        <div id="contactList"></div>
+        <span id="contactsResult"></span>
 
-            <!-- Bottom pagination -->
-            <nav id="paginationBottom" aria-label="Contact list pagination, bottom" style="display:none;">
-                <ol class="pagination"></ol>
-            </nav>
+        <!-- Bottom pagination -->
+        <nav id="paginationBottom" aria-label="Contact list pagination, bottom" style="display:none;">
+            <ol class="pagination"></ol>
+        </nav>
 
-            <hr class="section-divider" />
+        <hr class="section-divider" />
 
-            <!-- Edit Contact -->
-            <div id="editContactDiv" style="display:none;">
-                <div class="contact-panel">
-                    <h2>Edit <span>Contact</span></h2>
-                    <p class="panel-subtitle">Update details below</p>
-                    <div class="field-row">
-                        <div class="field-wrap">
-                            <label class="field-label">First Name</label>
+        <!-- Edit Contact -->
+        <div id="editContactDiv" style="display:none;">
+            <div class="contact-panel">
+                <h2>Edit <span>Contact</span></h2>
+                <p class="panel-subtitle">Update details below</p>
+                <div class="field-row">
+                    <div class="field-wrap">
+                        <label class="field-label">First Name</label>
                         <input type="text" id="editFirstName" placeholder="First Name" />
-                        </div>
-                        <div class="field-wrap">
-                            <label class="field-label">Last Name</label>
-                            <input type="text" id="editLastName" placeholder="Last Name" />
-                        </div>
                     </div>
-                    <div class="field-row single">
-                        <div class="field-wrap">
-                            <label class="field-label">Email</label>
-                            <input type="text" id="editEmail" placeholder="Email" />
-                        </div>
-                    </div>
-                    </div>
-                    <div class="field-row single">
-                        <div class="field-wrap">
-                            <label class="field-label">Phone Number</label>
-                            <input type="text" id="editPhone" placeholder="(555) 555-5555" maxlength="14" oninput="formatPhone(this)" />
-                        </div>
-                    </div>
-                    <div class="panel-actions">
-                        <button type="button" class="buttons primary" onclick="doSaveContact()">Save Changes</button>
-                        <button type="button" class="buttons" onclick="cancelEdit()">Cancel</button>
-                        <span id="editContactResult" style="font-size:0.85rem; color:var(--muted); font-style:italic;"></span>
+                    <div class="field-wrap">
+                        <label class="field-label">Last Name</label>
+                        <input type="text" id="editLastName" placeholder="Last Name" />
                     </div>
                 </div>
-                <hr class="section-divider" />
+                <div class="field-row single">
+                    <div class="field-wrap">
+                        <label class="field-label">Email</label>
+                        <input type="text" id="editEmail" placeholder="Email" />
+                    </div>
+                </div>
+                <div class="field-row single">
+                    <div class="field-wrap">
+                        <label class="field-label">Phone Number</label>
+                        <input type="text" id="editPhone" placeholder="(555) 555-5555" maxlength="14" oninput="formatPhone(this)" />
+                    </div>
+                </div>
+                <div class="panel-actions">
+                    <button type="button" class="buttons primary" onclick="doSaveContact()">Save Changes</button>
+                    <button type="button" class="buttons" onclick="cancelEdit()">Cancel</button>
+                    <span id="editContactResult" style="font-size:0.85rem; color:var(--muted); font-style:italic;"></span>
+                </div>
             </div>
+            <hr class="section-divider" />
+        </div>
 
-            <!-- Add Contact -->
-            <div id="addContactDiv">
-                <div class="contact-panel">
-                    <h2>Add <span>Contact</span></h2>
-                    <p class="panel-subtitle">New entry</p>
-                    <div class="field-row">
-                        <div class="field-wrap">
-                            <label class="field-label">First Name</label>
-                            <input type="text" id="contactFirstName" placeholder="First Name" />
-                        </div>
-                        <div class="field-wrap">
+        <!-- Add Contact -->
+        <div id="addContactDiv">
+            <div class="contact-panel">
+                <h2>Add <span>Contact</span></h2>
+                <p class="panel-subtitle">New entry</p>
+                <div class="field-row">
+                    <div class="field-wrap">
+                        <label class="field-label">First Name</label>
+                        <input type="text" id="contactFirstName" placeholder="First Name" />
+                    </div>
+                    <div class="field-wrap">
                         <label class="field-label">Last Name</label>
                         <input type="text" id="contactLastName" placeholder="Last Name" />
-                        </div>
-                    </div>
-                    <div class="field-row single">
-                        <div class="field-wrap">
-                            <label class="field-label">Email</label>
-                            <input type="text" id="contactEmail" placeholder="Email" />
-                        </div>
-                    </div>
-                    <div class="field-row single">
-                        <div class="field-wrap">
-                            <label class="field-label">Phone Number</label>
-                            <input type="text" id="contactPhone" placeholder="(555) 555-5555" maxlength="14" oninput="formatPhone(this)" />
-                        </div>
-                    </div>
-                    <div class="panel-actions">
-                        <button type="button" class="buttons primary" onclick="doAddContact()">Add Contact</button>
-                    <span id="addContactResult" style="font-size:0.85rem; color:var(--muted); font-style:italic;"></span>
                     </div>
                 </div>
+                <div class="field-row single">
+                    <div class="field-wrap">
+                        <label class="field-label">Email</label>
+                        <input type="text" id="contactEmail" placeholder="Email" />
+                    </div>
+                </div>
+                <div class="field-row single">
+                    <div class="field-wrap">
+                        <label class="field-label">Phone Number</label>
+                        <input type="text" id="contactPhone" placeholder="(555) 555-5555" maxlength="14" oninput="formatPhone(this)" />
+                    </div>
+                </div>
+                <div class="panel-actions">
+                    <button type="button" class="buttons primary" onclick="doAddContact()">Add Contact</button>
+                    <span id="addContactResult" style="font-size:0.85rem; color:var(--muted); font-style:italic;"></span>
+                </div>
             </div>
+        </div>
 
-        </div><!-- /app-shell -->  
-    </main>
+    </div><!-- /app-shell -->
+
 </body>
 </html>
