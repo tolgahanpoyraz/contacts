@@ -107,7 +107,7 @@ function buildPaginationHTML(page, total)
     }
     else
     {
-        html += `<li><a onclick="goToPage(${page - 1})">← Previous</a></li>`;
+        html += `<li><a tabindex="0" onclick="goToPage(${page - 1})" onkeydown="if(event.key==='Enter'||event.key===' ')goToPage(${page - 1})">← Previous</a></li>`;
     }
 
     // Page number buttons with gap logic
@@ -125,7 +125,7 @@ function buildPaginationHTML(page, total)
         }
         else
         {
-            html += `<li><a onclick="goToPage(${p})">${p}</a></li>`;
+            html += `<li><a tabindex="0" onclick="goToPage(${p})" onkeydown="if(event.key==='Enter'||event.key===' ')goToPage(${p})">${p}</a></li>`;
         }
 
         prev = p;
@@ -138,7 +138,7 @@ function buildPaginationHTML(page, total)
     }
     else
     {
-        html += `<li><a onclick="goToPage(${page + 1})">Next →</a></li>`;
+        html += `<li><a tabindex="0" onclick="goToPage(${page + 1})" onkeydown="if(event.key==='Enter'||event.key===' ')goToPage(${page + 1})">Next →</a></li>`;
     }
 
     return html;
@@ -179,6 +179,50 @@ function goToPage(p)
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+// ── Field error helpers ───────────────────────────────────────────────────────
+function setFieldError(inputId, hasError)
+{
+    const wrap = document.getElementById('wrap-' + inputId);
+    const input = document.getElementById(inputId);
+    if (!wrap) return;
+    if (hasError)
+    {
+        wrap.classList.add('error');
+        input.setAttribute('aria-invalid', 'true');
+    }
+    else
+    {
+        wrap.classList.remove('error');
+        input.removeAttribute('aria-invalid');
+    }
+}
+
+function clearFieldErrors(ids)
+{
+    ids.forEach(id => setFieldError(id, false));
+}
+
+function validateFields(fields)
+{
+    // fields: array of { id, value, validator? }
+    // returns true if all valid, marks errors on invalid ones
+    let valid = true;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    fields.forEach(({ id, value, type }) =>
+    {
+        if (!value || (type === 'email' && !emailRegex.test(value)))
+        {
+            setFieldError(id, true);
+            valid = false;
+        }
+        else
+        {
+            setFieldError(id, false);
+        }
+    });
+    return valid;
+}
+
 // ── Add contact ────────────────────────────────────────────────────────────────
 async function doAddContact()
 {
@@ -190,17 +234,13 @@ async function doAddContact()
     const resultEl  = document.getElementById('addContactResult');
     resultEl.innerHTML = '';
 
-    if (!firstName || !lastName || !email || !phone)
-    {
-        resultEl.innerHTML = 'All fields are required';
-        return;
-    }
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
-    {
-        resultEl.innerHTML = 'Please enter a valid email address';
-        return;
-    }
+    const valid = validateFields([
+        { id: 'contactFirstName', value: firstName },
+        { id: 'contactLastName',  value: lastName  },
+        { id: 'contactEmail',     value: email, type: 'email' },
+        { id: 'contactPhone',     value: phone  },
+    ]);
+    if (!valid) return;
 
     try
     {
@@ -210,6 +250,7 @@ async function doAddContact()
         document.getElementById('contactLastName').value  = '';
         document.getElementById('contactEmail').value     = '';
         document.getElementById('contactPhone').value     = '';
+        clearFieldErrors(['contactFirstName', 'contactLastName', 'contactEmail', 'contactPhone']);
         await fetchAndDisplay();
     }
     catch (err)
@@ -227,8 +268,11 @@ function doEditContact(contactId, firstName, lastName, email, phone)
     document.getElementById('editEmail').value     = email;
     document.getElementById('editPhone').value     = phone;
     document.getElementById('editContactResult').innerHTML = '';
+    clearFieldErrors(['editFirstName', 'editLastName', 'editEmail', 'editPhone']);
     document.getElementById('editContactDiv').style.display = 'block';
     document.getElementById('addContactDiv').style.display  = 'none';
+    // Scroll the edit panel into view
+    document.getElementById('editContactDiv').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 async function doSaveContact()
@@ -241,17 +285,13 @@ async function doSaveContact()
     const resultEl  = document.getElementById('editContactResult');
     resultEl.innerHTML = '';
 
-    if (!firstName || !lastName || !email || !phone)
-    {
-        resultEl.innerHTML = 'All fields are required';
-        return;
-    }
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
-    {
-        resultEl.innerHTML = 'Please enter a valid email address';
-        return;
-    }
+    const valid = validateFields([
+        { id: 'editFirstName', value: firstName },
+        { id: 'editLastName',  value: lastName  },
+        { id: 'editEmail',     value: email, type: 'email' },
+        { id: 'editPhone',     value: phone  },
+    ]);
+    if (!valid) return;
 
     try
     {
@@ -269,6 +309,8 @@ async function doSaveContact()
 function cancelEdit()
 {
     currentEditId = null;
+    clearFieldErrors(['editFirstName', 'editLastName', 'editEmail', 'editPhone']);
+    document.getElementById('editContactResult').innerHTML = '';
     document.getElementById('editContactDiv').style.display = 'none';
     document.getElementById('addContactDiv').style.display  = 'block';
 }
